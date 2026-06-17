@@ -8,6 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -31,6 +33,8 @@ public class User {
   @Column(name = "user_id")
   private Long id;
 
+  @NotBlank(message = "Имя пользователя не может быть пустым")
+  @Size(max = 100, message = "Имя не может быть длиннее 100 символов")
   @Column(name = "user_name", nullable = false, unique = true, length = 100)
   private String name;
 
