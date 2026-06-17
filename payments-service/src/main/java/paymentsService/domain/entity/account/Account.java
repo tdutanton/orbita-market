@@ -27,13 +27,15 @@ import paymentsService.domain.entity.user.User;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"user"})
-@ToString(exclude = {"user"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Account {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "account_id")
+  @EqualsAndHashCode.Include
+  @ToString.Include
   private Long id;
 
   @Column(name = "balance", nullable = false, precision = 19, scale = 2)
@@ -48,9 +50,11 @@ public class Account {
 
   @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id", nullable = false, unique = true)
-  @ToString.Exclude
-  @EqualsAndHashCode.Exclude
   private User user;
+
+  public Account(User user) {
+    this.user = user;
+  }
 
   @PrePersist
   protected void onCreate() {
