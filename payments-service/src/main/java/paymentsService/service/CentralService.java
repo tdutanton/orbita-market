@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import paymentsService.domain.entity.account.Account;
 import paymentsService.domain.entity.user.User;
 import paymentsService.exceptions.account.IllegalAmountException;
-import paymentsService.repository.account.AccountsRepository;
+import paymentsService.repository.AccountsRepository;
 import paymentsService.repository.user.UsersRepository;
 
 @Service

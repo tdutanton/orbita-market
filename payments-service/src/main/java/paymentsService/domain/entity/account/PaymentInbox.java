@@ -3,8 +3,6 @@ package paymentsService.domain.entity.account;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.math.BigDecimal;
@@ -17,46 +15,49 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "accounts")
+@Table(name = "payment_inbox")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class Account {
+public class PaymentInbox {
 
   @Id
-  @Column(name = "user_id")
+  @Column(name = "event_id")
   @EqualsAndHashCode.Include
+  private String eventId;
+
+  @Column(name = "order_id", nullable = false)
+  private String orderId;
+
+  @Column(name = "user_id", nullable = false)
   private String userId;
 
   @Column(precision = 19, scale = 2, nullable = false)
-  private BigDecimal balance = BigDecimal.valueOf(0.0);
+  private BigDecimal amount;
+
+  @Column(nullable = false)
+  private String status = "PENDING";
+
+  @Column(name = "failure_reason")
+  private String failureReason;
 
   @Column(name = "created_at", updatable = false)
   private Instant createdAt;
 
-  @Column(name = "updated_at")
-  private Instant updatedAt;
+  @Column(name = "processed_at")
+  private Instant processedAt;
 
   @Version
-  @Column(name = "version")
   private Long version = 0L;
 
-  public Account(String userId) {
+  public PaymentInbox(String eventId, String orderId, String userId, BigDecimal amount) {
+    this.eventId = eventId;
+    this.orderId = orderId;
     this.userId = userId;
-    this.balance = BigDecimal.valueOf(0.0);
-  }
-
-  @PrePersist
-  protected void onCreate() {
-    createdAt = Instant.now();
-    updatedAt = Instant.now();
-  }
-
-  @PreUpdate
-  protected void onUpdate() {
-    updatedAt = Instant.now();
+    this.amount = amount;
+    this.status = "PENDING";
   }
 }
