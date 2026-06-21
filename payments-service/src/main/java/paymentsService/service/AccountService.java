@@ -2,6 +2,7 @@ package paymentsService.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import paymentsService.domain.entity.account.Account;
 import paymentsService.exceptions.account.AccountAlreadyExistsException;
 import paymentsService.exceptions.account.AccountNotFoundException;
-import paymentsService.exceptions.account.IllegalAmountException;
+import paymentsService.exceptions.account.InvalidAmountException;
 import paymentsService.repository.AccountsRepository;
 
 @Service
@@ -31,7 +32,7 @@ public class AccountService {
   @Transactional
   public Account deposit(String userId, BigDecimal amount) {
     if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-      throw new IllegalAmountException("Некорректная сумма для пополнения");
+      throw new InvalidAmountException("Некорректная сумма для пополнения");
     }
     Account account = accountsRepository.findByUserId(userId)
         .orElseThrow(() -> new AccountNotFoundException("Пользователь и счет не найден"));
@@ -45,6 +46,11 @@ public class AccountService {
   public Account getAccount(String userId) {
     return accountsRepository.findById(userId)
         .orElseThrow(() -> new AccountNotFoundException("Пользователь и счет не найден"));
+  }
+
+  @Transactional(readOnly = true)
+  public List<Account> getAllAccounts() {
+    return accountsRepository.findAll();
   }
 }
 
