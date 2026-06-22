@@ -1,7 +1,7 @@
 services:
   payments-db:
     image: postgres:15
-    container_name: orbita-market-db
+    container_name: payments-db
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: payments_db
@@ -32,6 +32,10 @@ services:
       - DB_HOST=payments-db
       - DB_USERNAME=postgres
       - DB_PASSWORD=postgres
+      - KAFKA_GROUP_ID=payments-service
+      - PAYMENT_REQUESTED_TOPIC=order.payment.requested
+      - PAYMENT_COMPLETED_TOPIC=order.payment.completed
+      - PAYMENT_FAILED_TOPIC=order.payment.failed
     ports:
       - "8080:8080"
     networks:

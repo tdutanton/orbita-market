@@ -43,9 +43,6 @@ public class PaymentsServiceController {
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
-    if (request.value().compareTo(BigDecimal.ZERO) <= 0) {
-      throw new InvalidAmountException("Некорректное значение суммы - должно быть положительным");
-    }
     Account account = accountService.deposit(userId, request.value());
     return ResponseEntity.ok(new BalanceResponse(account.getUserId(), account.getBalance()));
   }

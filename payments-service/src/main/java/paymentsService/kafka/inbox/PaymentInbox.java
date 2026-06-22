@@ -1,8 +1,9 @@
-package paymentsService.domain.entity.account;
+package paymentsService.kafka.inbox;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import java.math.BigDecimal;
@@ -15,7 +16,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "payment_inbox")
+@Table(name = "payment_inbox_events")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -49,6 +50,13 @@ public class PaymentInbox {
 
   @Column(name = "processed_at")
   private Instant processedAt;
+
+  @PrePersist
+  protected void onCreate() {
+    if (processedAt == null) {
+      processedAt = Instant.now();
+    }
+  }
 
   @Version
   private Long version = 0L;

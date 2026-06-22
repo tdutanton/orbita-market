@@ -6,7 +6,7 @@ CREATE TABLE accounts (
     version BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE TABLE payment_inbox (
+CREATE TABLE payment_inbox_events (
     event_id TEXT PRIMARY KEY UNIQUE,
     order_id TEXT NOT NULL,
     user_id TEXT NOT NULL,

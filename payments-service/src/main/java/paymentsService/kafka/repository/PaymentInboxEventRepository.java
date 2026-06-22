@@ -1,4 +1,4 @@
-package paymentsService.repository;
+package paymentsService.kafka.repository;
 
 import java.math.BigDecimal;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -6,10 +6,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import paymentsService.domain.entity.account.PaymentInbox;
+import paymentsService.kafka.inbox.PaymentInbox;
 
 @Repository
-public interface PaymentInboxRepository extends JpaRepository<PaymentInbox, String> {
+public interface PaymentInboxEventRepository extends JpaRepository<PaymentInbox, String> {
 
   // идемпотентность операции вставки
   @Modifying
