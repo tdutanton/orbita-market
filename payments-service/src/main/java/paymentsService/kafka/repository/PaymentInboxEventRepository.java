@@ -13,7 +13,7 @@ public interface PaymentInboxEventRepository extends JpaRepository<PaymentInbox,
 
   // идемпотентность операции вставки
   @Modifying
-  @Query(value = "INSERT INTO payment_inbox (event_id, order_id, user_id, amount, status) " +
+  @Query(value = "INSERT INTO payment_inbox_events (event_id, order_id, user_id, amount, status) " +
       "VALUES (:eventId, :orderId, :userId, :amount, 'PENDING') " +
       "ON CONFLICT (event_id) DO NOTHING", nativeQuery = true)
   int tryInsert(@Param("eventId") String eventId,

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import paymentsService.kafka.event.OrderPaymentCompletedEvent;
 import paymentsService.kafka.event.OrderPaymentFailedEvent;
 
+// публикация сообщений об оплате (асинхронное взаимодействие)
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -18,7 +19,7 @@ public class PaymentEventPublisher {
   private final KafkaTemplate<String, String> kafkaTemplate;
   private final ObjectMapper objectMapper;
 
-  public void publishCompleted(String orderId, String userId, String originalEventId) {
+  public void publishCompleted(String orderId, String userId) {
     try {
       var event = new OrderPaymentCompletedEvent(
           UUID.randomUUID().toString(),
@@ -38,8 +39,7 @@ public class PaymentEventPublisher {
     }
   }
 
-  public void publishFailed(String orderId, String userId, String originalEventId,
-      String failureReason) {
+  public void publishFailed(String orderId, String userId, String failureReason) {
     try {
       var event = new OrderPaymentFailedEvent(
           UUID.randomUUID().toString(),

@@ -16,6 +16,7 @@ import paymentsService.kafka.publisher.PaymentEventPublisher;
 import paymentsService.kafka.repository.PaymentInboxEventRepository;
 import paymentsService.repository.AccountsRepository;
 
+// обработка запросов на оплату (асинхронное взаимодействие)
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -63,7 +64,7 @@ public class PaymentRequestConsumer {
       }
 
       if (account.getBalance().compareTo(event.amount()) < 0) {
-        failPayment(event, "INSUFFICIENT_BALANCE");
+        failPayment(event, "LOW_BALANCE");
         return;
       }
       BigDecimal newBalance = account.getBalance().subtract(event.amount());
@@ -71,7 +72,7 @@ public class PaymentRequestConsumer {
       accountsRepository.save(account);
 
       markInboxProcessed(event.eventId(), "COMPLETED", null);
-      log.info("Kafka: успешно пополнен счет на {} геокредитов для пользователя {} для заказа {}",
+      log.info("Kafka: успешно списано {} геокредитов у пользователя {} для заказа {}",
           event.amount(), event.userId(), event.orderId());
     } catch (Exception e) {
       log.error("Kafka: ошибка обработки платежа для заказа {}", event.orderId(), e);
@@ -79,12 +80,12 @@ public class PaymentRequestConsumer {
       return;
     }
 
-    eventPublisher.publishCompleted(event.orderId(), event.userId(), event.eventId());
+    eventPublisher.publishCompleted(event.orderId(), event.userId());
   }
 
   private void failPayment(OrderPaymentRequestedEvent event, String reason) {
     markInboxProcessed(event.eventId(), "FAILED", reason);
-    eventPublisher.publishFailed(event.orderId(), event.userId(), event.eventId(), reason);
+    eventPublisher.publishFailed(event.orderId(), event.userId(), reason);
     log.warn("Kafka: ошибка платежа для заказа {}: {}", event.orderId(), reason);
   }
 

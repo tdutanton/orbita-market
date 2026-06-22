@@ -18,5 +18,5 @@ CREATE TABLE payment_inbox_events (
     version BIGINT NOT NULL DEFAULT 0
 );
 
-CREATE INDEX idx_payment_inbox_order_id ON payment_inbox(order_id);
-CREATE INDEX idx_payment_inbox_status ON payment_inbox(status);
+CREATE INDEX idx_payment_inbox_order_id ON payment_inbox_events(order_id);
+CREATE INDEX idx_payment_inbox_status ON payment_inbox_events(status);

@@ -26,7 +26,7 @@ import org.springframework.kafka.listener.ContainerProperties;
 public class KafkaConfig {
 
   // адрес для kafka
-  @Value("${kafka.bootstrap-servers:kafka:9092}")
+  @Value("${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}")
   private String bootstrapServers;
 
   // имя группы потребителей
@@ -34,24 +34,27 @@ public class KafkaConfig {
   private String groupId;
 
   @Bean
-  public NewTopic paymentRequestedTopic() {
-    return TopicBuilder.name("${PAYMENT_REQUESTED_TOPIC:order.payment.requested}")
+  public NewTopic paymentRequestedTopic(
+      @Value("${PAYMENT_REQUESTED_TOPIC:order.payment.requested}") String topicName) {
+    return TopicBuilder.name(topicName)
         .partitions(1)
         .replicas(1)
         .build();
   }
 
   @Bean
-  public NewTopic paymentCompletedTopic() {
-    return TopicBuilder.name("${PAYMENT_COMPLETED_TOPIC:order.payment.completed}")
+  public NewTopic paymentCompletedTopic(
+      @Value("${PAYMENT_COMPLETED_TOPIC:order.payment.completed}") String topicName) {
+    return TopicBuilder.name(topicName)
         .partitions(1)
         .replicas(1)
         .build();
   }
 
   @Bean
-  public NewTopic paymentFailedTopic() {
-    return TopicBuilder.name("${PAYMENT_FAILED_TOPIC:order.payment.failed}")
+  public NewTopic paymentFailedTopic(
+      @Value("${PAYMENT_FAILED_TOPIC:order.payment.failed}") String topicName) {
+    return TopicBuilder.name(topicName)
         .partitions(1)
         .replicas(1)
         .build();
