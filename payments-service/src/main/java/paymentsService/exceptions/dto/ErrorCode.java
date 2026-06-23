@@ -1,5 +1,8 @@
 package paymentsService.exceptions.dto;
 
+import lombok.Getter;
+
+@Getter
 public enum ErrorCode {
 
   ACCOUNT_ALREADY_EXISTS("ACCOUNT_ALREADY_EXISTS"),
@@ -14,7 +17,4 @@ public enum ErrorCode {
     this.description = description;
   }
 
-  public String getDescription() {
-    return description;
-  }
 }
