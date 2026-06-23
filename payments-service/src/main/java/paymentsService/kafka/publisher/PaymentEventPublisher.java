@@ -5,10 +5,11 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import paymentsService.kafka.event.OrderPaymentCompletedEvent;
 import paymentsService.kafka.event.OrderPaymentFailedEvent;
+import paymentsService.kafka.outbox.PaymentOutbox;
+import paymentsService.kafka.repository.PaymentOutboxEventRepository;
 
 // публикация сообщений об оплате (асинхронное взаимодействие)
 @Slf4j
@@ -16,7 +17,7 @@ import paymentsService.kafka.event.OrderPaymentFailedEvent;
 @RequiredArgsConstructor
 public class PaymentEventPublisher {
 
-  private final KafkaTemplate<String, String> kafkaTemplate;
+  private final PaymentOutboxEventRepository outboxRepository;
   private final ObjectMapper objectMapper;
 
   public void publishCompleted(String orderId, String userId) {
@@ -28,13 +29,19 @@ public class PaymentEventPublisher {
           Instant.now()
       );
       String json = objectMapper.writeValueAsString(event);
-      kafkaTemplate.send("${PAYMENT_COMPLETED_TOPIC}", orderId, json);
+      var outbox = new PaymentOutbox(
+          UUID.randomUUID().toString(),
+          "${PAYMENT_COMPLETED_TOPIC}",
+          orderId,
+          json
+      );
+      outboxRepository.save(outbox);
       log.info(
-          "Kafka: опубликовано сообщение OrderPaymentCompleted (выполнен платеж) для заказа {}",
+          "Outbox event: опубликовано outbox сообщение OrderPaymentCompleted (выполнен платеж) для заказа {}",
           orderId);
     } catch (Exception e) {
       log.error(
-          "Kafka: ошибка при публикации сообщения OrderPaymentCompleted (выполнен платеж) для заказа {}",
+          "Outbox event: ошибка при публикации outbox сообщения OrderPaymentCompleted (выполнен платеж) для заказа {}",
           orderId, e);
     }
   }
@@ -49,12 +56,21 @@ public class PaymentEventPublisher {
           Instant.now()
       );
       String json = objectMapper.writeValueAsString(event);
-      kafkaTemplate.send("${PAYMENT_FAILED_TOPIC}", orderId, json);
-      log.info("Kafka: опубликовано сообщение OrderPaymentFailed (отказ платежа) для заказа {}: {}",
+      var outbox = new PaymentOutbox(
+          UUID.randomUUID().toString(),
+          "${PAYMENT_FAILED_TOPIC}",
+          orderId,
+          json
+      );
+      outboxRepository.save(outbox);
+      log.info(
+          "Outbox event: опубликовано outbox сообщение OrderPaymentFailed (отказ платежа) для заказа {}: {}",
           orderId,
           failureReason);
     } catch (Exception e) {
-      log.error("Kafka: ошибка при публикации сообщения (отказ платежа) для заказа {}", orderId, e);
+      log.error(
+          "Outbox event: ошибка при публикации outbox сообщения (отказ платежа) для заказа {}",
+          orderId, e);
     }
   }
 }
