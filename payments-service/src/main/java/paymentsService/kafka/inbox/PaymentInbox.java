@@ -36,10 +36,10 @@ public class PaymentInbox {
   @Column(name = "user_id", nullable = false)
   private String userId;
 
-  @Column(precision = 19, scale = 2, nullable = false)
+  @Column(name = "amount", precision = 19, scale = 2, nullable = false)
   private BigDecimal amount;
 
-  @Column(nullable = false)
+  @Column(name = "status", nullable = false)
   private String status = "PENDING";
 
   @Column(name = "failure_reason")
@@ -51,14 +51,8 @@ public class PaymentInbox {
   @Column(name = "processed_at")
   private Instant processedAt;
 
-  @PrePersist
-  protected void onCreate() {
-    if (processedAt == null) {
-      processedAt = Instant.now();
-    }
-  }
-
   @Version
+  @Column(name = "version")
   private Long version = 0L;
 
   public PaymentInbox(String eventId, String orderId, String userId, BigDecimal amount) {
@@ -67,5 +61,12 @@ public class PaymentInbox {
     this.userId = userId;
     this.amount = amount;
     this.status = "PENDING";
+  }
+
+  @PrePersist
+  protected void onCreate() {
+    if (processedAt == null) {
+      processedAt = Instant.now();
+    }
   }
 }
