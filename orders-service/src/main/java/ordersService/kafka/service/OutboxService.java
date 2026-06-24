@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ordersService.kafka.outbox.OrderOutbox;
 import ordersService.kafka.repository.OrderOutboxRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,9 @@ public class OutboxService {
   private final OrderOutboxRepository outboxRepository;
   private final KafkaTemplate<String, String> kafkaTemplate;
 
+  @Value("${spring.kafka.topics.payment-requested}")
+  private String paymentRequestedTopic;
+
   @Scheduled(fixedDelay = 2000)
   @Transactional
   public void processOutbox() {
@@ -25,7 +29,7 @@ public class OutboxService {
 
     for (OrderOutbox msg : unsent) {
       try {
-        kafkaTemplate.send("${PAYMENT_REQUESTED_TOPIC}", msg.getOrderId(), msg.getPayload());
+        kafkaTemplate.send(paymentRequestedTopic, msg.getOrderId(), msg.getPayload());
         msg.setSent(true);
         outboxRepository.save(msg);
         log.debug("Kafka: опубликовано исходящее сообщение {} для заказа {}", msg.getEventId(),

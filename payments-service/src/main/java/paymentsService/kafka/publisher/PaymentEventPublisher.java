@@ -31,7 +31,7 @@ public class PaymentEventPublisher {
       String json = objectMapper.writeValueAsString(event);
       var outbox = new PaymentOutbox(
           UUID.randomUUID().toString(),
-          "${PAYMENT_COMPLETED_TOPIC}",
+          "${spring.kafka.topics.payment-completed}",
           orderId,
           json
       );
@@ -58,7 +58,7 @@ public class PaymentEventPublisher {
       String json = objectMapper.writeValueAsString(event);
       var outbox = new PaymentOutbox(
           UUID.randomUUID().toString(),
-          "${PAYMENT_FAILED_TOPIC}",
+          "${spring.kafka.topics.payment-failed}",
           orderId,
           json
       );

@@ -20,7 +20,8 @@ public class PaymentResultConsumer {
   private final OrderService orderService;
   private final ObjectMapper objectMapper;
 
-  @KafkaListener(topics = "${PAYMENT_COMPLETED_TOPIC}", concurrency = "1")
+
+  @KafkaListener(topics = "${spring.kafka.topics.payment-completed}", concurrency = "1")
   public void consumeCompleted(String message, Acknowledgment ack) {
     try {
       OrderPaymentCompletedEvent event = objectMapper.readValue(message,
@@ -43,7 +44,7 @@ public class PaymentResultConsumer {
     }
   }
 
-  @KafkaListener(topics = "${PAYMENT_FAILED_TOPIC}", concurrency = "1")
+  @KafkaListener(topics = "${spring.kafka.topics.payment-failed}", concurrency = "1")
   public void consumeFailed(String message, Acknowledgment ack) {
     try {
       OrderPaymentFailedEvent event = objectMapper.readValue(message,

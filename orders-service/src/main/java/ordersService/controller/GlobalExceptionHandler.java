@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
             "Внутренняя ошибка сервера"));
   }
 
-  @ExceptionHandler(Exception.class)
+  @ExceptionHandler(InternalErrorException.class)
   public ResponseEntity<ErrorResponse> handleInternalError(InternalErrorException ex) {
     // HttpStatus.INTERNAL_SERVER_ERROR - код ошибки 500
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

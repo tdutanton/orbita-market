@@ -3,7 +3,6 @@ package ordersService.domain.entity.order;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
@@ -18,7 +17,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import ordersService.domain.inner.jsonConverter.JsonNodeConverter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "orders")
@@ -47,7 +47,7 @@ public class Order {
   @Column(name = "price", nullable = false)
   private BigDecimal price;
 
-  @Convert(converter = JsonNodeConverter.class)
+  @JdbcTypeCode(SqlTypes.JSON)
   @Column(name = "payload", columnDefinition = "jsonb")
   private JsonNode payload;
 
