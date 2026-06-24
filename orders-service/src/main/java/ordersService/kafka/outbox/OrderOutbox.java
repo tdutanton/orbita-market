@@ -15,7 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "order_outbox")
+@Table(name = "order_outbox_events")
 @Getter
 @Setter
 @NoArgsConstructor

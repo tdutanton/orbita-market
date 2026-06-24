@@ -1,5 +1,7 @@
 package ordersService.exceptions.dto;
 
+import lombok.Getter;
+
 @Getter
 public enum ErrorCode {
 
