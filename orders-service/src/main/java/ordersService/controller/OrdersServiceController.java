@@ -52,7 +52,7 @@ public class OrdersServiceController {
 
     for (String field : requiredFields) {
       if (!payload.has(field) || payload.get(field).isNull()) {
-        return "Пропущено необходимое поле: " + field;
+        return "Пропущено необходимое поле в payload: " + field;
       }
     }
 
