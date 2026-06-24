@@ -27,7 +27,8 @@ public class PaymentRequestConsumer {
   private final PaymentEventPublisher eventPublisher;
   private final ObjectMapper objectMapper;
 
-  @KafkaListener(topics = "${PAYMENT_REQUESTED_TOPIC}", concurrency = "1")
+  @KafkaListener(topics = "${spring.kafka.topics.payment-requested}", concurrency = "1")
+  @Transactional
   public void consume(String message, Acknowledgment ack) {
     try {
       OrderPaymentRequestedEvent event = objectMapper.readValue(message,
@@ -52,7 +53,6 @@ public class PaymentRequestConsumer {
     }
   }
 
-  @Transactional
   protected void processPayment(OrderPaymentRequestedEvent event) {
     try {
       Account account = accountsRepository.findByUserId(event.userId())

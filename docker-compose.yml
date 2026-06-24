@@ -10,7 +10,7 @@ services:
     networks:
       - orbita-market-net
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - payments_postgres_data:/var/lib/postgresql/data
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -38,7 +38,57 @@ services:
       - PAYMENT_FAILED_TOPIC=order.payment.failed
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
     ports:
-      - "8080:8080"
+      - "8081:8080"
+    networks:
+      - orbita-market-net
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    restart: unless-stopped
+
+  orders-db:
+    image: postgres:15
+    container_name: orders-db
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orders_db
+    ports:
+      - "5433:5432"
+    networks:
+      - orbita-market-net
+    volumes:
+      - orders_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  orders-service:
+    build:
+      context: ./orders-service
+      dockerfile: Dockerfile
+    container_name: orders
+    depends_on:
+      orders-db:
+        condition: service_healthy
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=orders-db
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - KAFKA_GROUP_ID=orders-service
+      - PAYMENT_REQUESTED_TOPIC=order.payment.requested
+      - PAYMENT_COMPLETED_TOPIC=order.payment.completed
+      - PAYMENT_FAILED_TOPIC=order.payment.failed
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    ports:
+      - "8082:8080"
     networks:
       - orbita-market-net
     healthcheck:
@@ -84,7 +134,7 @@ services:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     ports:
-      - "8081:8080"
+      - "8083:8080"
     environment:
       # Настройка подключения к Kafka
       KAFKA_CLUSTERS_0_NAME: orbita-market-dev
@@ -104,7 +154,8 @@ services:
       start_period: 20s
 
 volumes:
-  postgres_data:
+  payments_postgres_data:
+  orders_postgres_data:
   kafka_data:
 
 networks:

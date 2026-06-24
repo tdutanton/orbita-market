@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import paymentsService.kafka.event.OrderPaymentCompletedEvent;
 import paymentsService.kafka.event.OrderPaymentFailedEvent;
@@ -20,6 +21,12 @@ public class PaymentEventPublisher {
   private final PaymentOutboxEventRepository outboxRepository;
   private final ObjectMapper objectMapper;
 
+  @Value("${spring.kafka.topics.payment-completed}")
+  private String paymentCompletedTopic;
+
+  @Value("${spring.kafka.topics.payment-failed}")
+  private String paymentFailedTopic;
+
   public void publishCompleted(String orderId, String userId) {
     try {
       var event = new OrderPaymentCompletedEvent(
@@ -31,7 +38,7 @@ public class PaymentEventPublisher {
       String json = objectMapper.writeValueAsString(event);
       var outbox = new PaymentOutbox(
           UUID.randomUUID().toString(),
-          "${PAYMENT_COMPLETED_TOPIC}",
+          paymentCompletedTopic,
           orderId,
           json
       );
@@ -58,7 +65,7 @@ public class PaymentEventPublisher {
       String json = objectMapper.writeValueAsString(event);
       var outbox = new PaymentOutbox(
           UUID.randomUUID().toString(),
-          "${PAYMENT_FAILED_TOPIC}",
+          paymentFailedTopic,
           orderId,
           json
       );
