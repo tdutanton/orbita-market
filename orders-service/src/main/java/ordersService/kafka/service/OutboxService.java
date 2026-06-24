@@ -1,0 +1,39 @@
+package ordersService.kafka.service;
+
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import ordersService.kafka.outbox.OrderOutbox;
+import ordersService.kafka.repository.OrderOutboxRepository;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class OutboxService {
+
+  private final OrderOutboxRepository outboxRepository;
+  private final KafkaTemplate<String, String> kafkaTemplate;
+
+  @Scheduled(fixedDelay = 2000)
+  @Transactional
+  public void processOutbox() {
+    List<OrderOutbox> unsent = outboxRepository.findBySentFalseOrderByCreatedAtAsc();
+
+    for (OrderOutbox msg : unsent) {
+      try {
+        kafkaTemplate.send("${PAYMENT_REQUESTED_TOPIC}", msg.getOrderId(), msg.getPayload());
+        msg.setSent(true);
+        outboxRepository.save(msg);
+        log.debug("Kafka: опубликовано исходящее сообщение {} для заказа {}", msg.getEventId(),
+            msg.getOrderId());
+      } catch (Exception e) {
+        log.error("Kafka: ошибка при публикации исходящего сообщения {} для заказа {}",
+            msg.getEventId(), msg.getOrderId(), e);
+      }
+    }
+  }
+}
