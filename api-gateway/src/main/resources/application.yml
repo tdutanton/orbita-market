@@ -1,19 +1,20 @@
 server:
   port: ${GATEWAY_PORT:8080}
 
+# Применен Spring Cloud Gateway сервер
 spring:
   cloud:
     gateway:
       routes:
         - id: orders-service
-          uri: ${ORDERS_SERVICE_URL:http://orders:8082}
+          uri: ${ORDERS_SERVICE_URL}
           predicates:
             - Path=/orders/**
           filters:
             - RewritePath=/orders/(?<segment>.*), /api/v1/orders/$\{segment}
 
         - id: payments-service
-          uri: ${PAYMENTS_SERVICE_URL:http://payments:8081}
+          uri: ${PAYMENTS_SERVICE_URL}
           predicates:
             - Path=/payments/**
           filters:
