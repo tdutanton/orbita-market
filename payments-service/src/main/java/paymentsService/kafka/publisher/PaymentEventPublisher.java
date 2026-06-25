@@ -1,6 +1,7 @@
 package paymentsService.kafka.publisher;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,15 @@ public class PaymentEventPublisher {
   @Value("${spring.kafka.topics.payment-failed}")
   private String paymentFailedTopic;
 
-  public void publishCompleted(String orderId, String userId) {
+  public void publishCompleted(String orderId, String userId, BigDecimal amount,
+      BigDecimal newBalance) {
     try {
       var event = new OrderPaymentCompletedEvent(
           UUID.randomUUID().toString(),
           orderId,
           userId,
+          amount,
+          newBalance,
           Instant.now()
       );
       String json = objectMapper.writeValueAsString(event);

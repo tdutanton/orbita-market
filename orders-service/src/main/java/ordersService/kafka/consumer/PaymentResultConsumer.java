@@ -26,7 +26,10 @@ public class PaymentResultConsumer {
     try {
       OrderPaymentCompletedEvent event = objectMapper.readValue(message,
           OrderPaymentCompletedEvent.class);
-      log.info("Kafka: поступило сообщение OrderPaymentCompleted: id заказа = {}", event.orderId());
+      log.info("Kafka: поступило сообщение OrderPaymentCompleted: id заказа = {}, "
+              + "стоимость = {}, "
+              + "баланс после покупки = {}",
+          event.orderId(), event.amount(), event.newBalance());
 
       int inserted = inboxRepository.tryInsert(
           event.eventId(), event.orderId(), "ORDER_PAYMENT_COMPLETED");

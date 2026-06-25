@@ -74,13 +74,11 @@ public class PaymentRequestConsumer {
       markInboxProcessed(event.eventId(), "COMPLETED", null);
       log.info("Kafka: успешно списано {} геокредитов у пользователя {} для заказа {}",
           event.amount(), event.userId(), event.orderId());
+      eventPublisher.publishCompleted(event.orderId(), event.userId(), event.amount(), newBalance);
     } catch (Exception e) {
       log.error("Kafka: ошибка обработки платежа для заказа {}", event.orderId(), e);
       failPayment(event, ErrorCode.INTERNAL_ERROR.name());
-      return;
     }
-
-    eventPublisher.publishCompleted(event.orderId(), event.userId());
   }
 
   private void failPayment(OrderPaymentRequestedEvent event, String reason) {
