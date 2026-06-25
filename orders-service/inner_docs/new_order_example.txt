@@ -1,0 +1,8 @@
+{
+  "productType": "ARCHIVE",
+  "payload": {
+    "aoi":3.0,
+    "capture_date":"2026-02-02",
+    "sensor_type":"MSI"
+  }
+}
