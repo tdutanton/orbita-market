@@ -10,6 +10,7 @@ import ordersService.service.OrderService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Component
@@ -22,6 +23,7 @@ public class PaymentResultConsumer {
 
 
   @KafkaListener(topics = "${spring.kafka.topics.payment-completed}", concurrency = "1")
+  @Transactional
   public void consumeCompleted(String message, Acknowledgment ack) {
     try {
       OrderPaymentCompletedEvent event = objectMapper.readValue(message,
@@ -48,6 +50,7 @@ public class PaymentResultConsumer {
   }
 
   @KafkaListener(topics = "${spring.kafka.topics.payment-failed}", concurrency = "1")
+  @Transactional
   public void consumeFailed(String message, Acknowledgment ack) {
     try {
       OrderPaymentFailedEvent event = objectMapper.readValue(message,

@@ -2,7 +2,6 @@ package ordersService.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
@@ -19,6 +18,7 @@ import ordersService.kafka.repository.OrderOutboxRepository;
 import ordersService.repository.OrdersRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -66,9 +66,9 @@ public class OrderService {
     order.setPrice(price);
     order.setCreatedAt(Instant.now());
 
+    ordersRepository.save(order);
     log.info("В OrderService создан заказ {}", orderId);
     log.info("Заказу {} присвоен статус CREATED", orderId);
-    ordersRepository.save(order);
 
     String eventId = UUID.randomUUID().toString();
     var event = new OrderPaymentRequestedEvent(eventId, orderId, userId, price, Instant.now());
@@ -76,14 +76,16 @@ public class OrderService {
     try {
       String eventJson = objectMapper.writeValueAsString(event);
       OrderOutbox outbox = new OrderOutbox(eventId, orderId, "ORDER_PAYMENT_REQUESTED", eventJson);
-      log.info("В outboxRepository отправлен outbox event для заказа {}", orderId);
       outboxRepository.save(outbox);
+      log.info("В outboxRepository отправлен outbox event для заказа {}", orderId);
     } catch (Exception e) {
       log.error("Ошибка при сериализации outbox event для заказа {}", orderId, e);
     }
 
     order.setStatus("PAYMENT_PENDING");
     log.info("Заказу {} присвоен статус PAYMENT_PENDING", orderId);
+    ordersRepository.save(order);
+    log.info("ordersRepository обновил заказ {} со статусом PAYMENT_PENDING", orderId);
     return order;
   }
 
