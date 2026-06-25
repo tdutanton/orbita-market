@@ -1,6 +1,5 @@
 package paymentsService.controller;
 
-import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import paymentsService.domain.entity.account.Account;
 import paymentsService.domain.request.TopUpRequest;
 import paymentsService.domain.response.AccountResponse;
 import paymentsService.domain.response.BalanceResponse;
-import paymentsService.exceptions.account.InvalidAmountException;
 import paymentsService.exceptions.account.MissingUserIdException;
 import paymentsService.service.AccountService;
 
@@ -44,7 +42,8 @@ public class PaymentsServiceController {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
     Account account = accountService.deposit(userId, request.value());
-    return ResponseEntity.ok(new BalanceResponse(account.getUserId(), account.getBalance()));
+    return ResponseEntity.ok(
+        new BalanceResponse(account.getUserId(), account.getBalance(), account.getCurrency()));
   }
 
   @GetMapping("/accounts/balance")
@@ -53,7 +52,8 @@ public class PaymentsServiceController {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
     Account account = accountService.getAccount(userId);
-    return ResponseEntity.ok(new BalanceResponse(account.getUserId(), account.getBalance()));
+    return ResponseEntity.ok(
+        new BalanceResponse(account.getUserId(), account.getBalance(), account.getCurrency()));
   }
 
   @GetMapping("/accounts/overview")

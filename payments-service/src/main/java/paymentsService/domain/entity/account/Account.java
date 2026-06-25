@@ -34,6 +34,9 @@ public class Account {
   @Column(precision = 19, scale = 2, nullable = false)
   private BigDecimal balance = BigDecimal.valueOf(0.0);
 
+  @Column(name = "currency", nullable = false)
+  private String currency = "geocredits";
+
   @Column(name = "created_at", updatable = false)
   private Instant createdAt;
 
