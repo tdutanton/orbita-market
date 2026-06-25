@@ -37,3 +37,9 @@ spring:
       payment-requested: ${PAYMENT_REQUESTED_TOPIC:order.payment.requested}
       payment-completed: ${PAYMENT_COMPLETED_TOPIC:order.payment.completed}
       payment-failed: ${PAYMENT_FAILED_TOPIC:order.payment.failed}
+
+rates:
+  price-to-aoi:
+    archive: 100
+    tasking: 200
+    monitoring: 300

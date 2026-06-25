@@ -10,12 +10,14 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ordersService.domain.entity.order.Order;
+import ordersService.domain.entity.productType.ProductType;
 import ordersService.domain.response.OrderResponse;
 import ordersService.exceptions.order.OrderNotFoundException;
 import ordersService.kafka.event.OrderPaymentRequestedEvent;
 import ordersService.kafka.outbox.OrderOutbox;
 import ordersService.kafka.repository.OrderOutboxRepository;
 import ordersService.repository.OrdersRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -27,16 +29,41 @@ public class OrderService {
   private final OrderOutboxRepository outboxRepository;
   private final ObjectMapper objectMapper;
 
+  @Value("${rates.price-to-aoi.archive}")
+  private Integer archiveRate;
+
+  @Value("${rates.price-to-aoi.tasking}")
+  private Integer taskingRate;
+
+  @Value("${rates.price-to-aoi.monitoring}")
+  private Integer monitoringRate;
+
+  public BigDecimal calculatePrice(String productType, JsonNode aoi) {
+    ProductType type;
+    try {
+      type = ProductType.valueOf(productType);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Неизвестный тип продукта: " + productType);
+    }
+    return switch (type) {
+      case ProductType.ARCHIVE -> PriceCalculation.orderPrice(aoi.asDouble(), archiveRate);
+      case TASKING -> PriceCalculation.orderPrice(aoi.asDouble(), taskingRate);
+      case MONITORING -> PriceCalculation.orderPrice(aoi.asDouble(), monitoringRate);
+    };
+  }
+
   @Transactional
-  public Order createOrder(String userId, String productType, BigDecimal price, JsonNode payload) {
+  public Order createOrder(String userId, String productType, JsonNode payload) {
     String orderId = UUID.randomUUID().toString();
     Order order = new Order();
     order.setId(orderId);
     order.setUserId(userId);
     order.setProductType(productType);
     order.setStatus("CREATED");
-    order.setPrice(price);
     order.setPayload(payload);
+
+    BigDecimal price = calculatePrice(productType, payload.get("aoi"));
+    order.setPrice(price);
 
     log.info("В OrderService создан заказ {}", orderId);
     log.info("Заказу {} присвоен статус CREATED", orderId);
