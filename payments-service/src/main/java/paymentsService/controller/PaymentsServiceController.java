@@ -1,5 +1,10 @@
 package paymentsService.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +19,7 @@ import paymentsService.domain.entity.account.Account;
 import paymentsService.domain.request.TopUpRequest;
 import paymentsService.domain.response.AccountResponse;
 import paymentsService.domain.response.BalanceResponse;
+import paymentsService.domain.response.ErrorResponse;
 import paymentsService.exceptions.account.MissingUserIdException;
 import paymentsService.service.AccountService;
 
@@ -26,6 +32,17 @@ public class PaymentsServiceController {
   private final AccountService accountService;
 
   @PostMapping("/accounts")
+  @Operation(summary = "Создание счета для пользователя")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "201", description = "Счет успешно создан",
+          content = @Content(schema = @Schema(implementation = AccountResponse.class))),
+      @ApiResponse(responseCode = "400", description = "Нет id пользователя",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "409", description = "Счет уже существует",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
   public ResponseEntity<AccountResponse> createAccount(@RequestHeader("X-User-Id") String userId) {
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
@@ -35,6 +52,17 @@ public class PaymentsServiceController {
   }
 
   @PostMapping("/accounts/top-up")
+  @Operation(summary = "Пополнение счета для пользователя")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Счет успешно пополнен",
+          content = @Content(schema = @Schema(implementation = BalanceResponse.class))),
+      @ApiResponse(responseCode = "400", description = "Нет id пользователя, некорректная сумма",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "404", description = "Счет не создан",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
   public ResponseEntity<BalanceResponse> topUp(
       @RequestHeader("X-User-Id") String userId,
       @RequestBody TopUpRequest request) {
@@ -47,6 +75,17 @@ public class PaymentsServiceController {
   }
 
   @GetMapping("/accounts/balance")
+  @Operation(summary = "Получить баланс пользователя")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Баланс успешно загружен",
+          content = @Content(schema = @Schema(implementation = BalanceResponse.class))),
+      @ApiResponse(responseCode = "400", description = "Нет id пользователя",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "404", description = "Счет не найден",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
   public ResponseEntity<BalanceResponse> getBalance(@RequestHeader("X-User-Id") String userId) {
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
@@ -57,6 +96,15 @@ public class PaymentsServiceController {
   }
 
   @GetMapping("/accounts/overview")
+  @Operation(summary = "Получить список пользователей и балансов")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Список пользователей и балансов успешно загружен",
+          content = @Content(schema = @Schema(implementation = AccountResponse.class))),
+      @ApiResponse(responseCode = "400", description = "Нет id пользователя",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+      @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера",
+          content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+  })
   public ResponseEntity<List<AccountResponse>> overview() {
     List<Account> accounts = accountService.getAllAccounts();
     List<AccountResponse> responses = accounts.stream()

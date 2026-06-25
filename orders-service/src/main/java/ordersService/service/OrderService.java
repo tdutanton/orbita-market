@@ -58,12 +58,13 @@ public class OrderService {
     Order order = new Order();
     order.setId(orderId);
     order.setUserId(userId);
-    order.setProductType(productType);
-    order.setStatus("CREATED");
     order.setPayload(payload);
+    order.setStatus("CREATED");
+    order.setProductType(productType);
 
     BigDecimal price = calculatePrice(productType, payload.get("aoi"));
     order.setPrice(price);
+    order.setCreatedAt(Instant.now());
 
     log.info("В OrderService создан заказ {}", orderId);
     log.info("Заказу {} присвоен статус CREATED", orderId);
