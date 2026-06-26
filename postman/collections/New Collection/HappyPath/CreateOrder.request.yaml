@@ -3,7 +3,11 @@ name: CreateOrder
 url: "{{orders_url}}/orders"
 method: POST
 headers:
-  X-User-Id: "{{user_id}}"
+  - key: X-User-Id
+    value: "{{user_id}}"
+  - key: Connection
+    value: close
+    disabled: true
 body:
   type: json
   content: "{\r

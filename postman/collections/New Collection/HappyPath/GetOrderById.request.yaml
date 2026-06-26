@@ -3,7 +3,11 @@ name: GetOrderById
 url: "{{orders_url}}/{{order_id}}"
 method: GET
 headers:
-  X-User-Id: "{{user_id}}"
+  - key: X-User-Id
+    value: "{{user_id}}"
+  - key: Connection
+    value: close
+    disabled: true
 scripts:
   - type: afterResponse
     code: "const response = pm.response.json();\r

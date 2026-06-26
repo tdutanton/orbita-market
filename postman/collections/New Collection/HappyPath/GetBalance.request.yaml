@@ -3,7 +3,11 @@ name: GetBalance
 url: "{{payments_url}}/accounts/balance"
 method: GET
 headers:
-  X-User-Id: "{{user_id}}"
+  - key: X-User-Id
+    value: "{{user_id}}"
+  - key: Connection
+    value: close
+    disabled: true
 scripts:
   - type: afterResponse
     code: "pm.test(\"статус 200\", () => {\r

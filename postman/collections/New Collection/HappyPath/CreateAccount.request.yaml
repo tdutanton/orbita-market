@@ -3,7 +3,11 @@ name: CreateAccount
 url: "{{payments_url}}/accounts"
 method: POST
 headers:
-  X-User-Id: "{{user_id}}"
+  - key: X-User-Id
+    value: "{{user_id}}"
+  - key: Connection
+    value: close
+    disabled: true
 scripts:
   - type: afterResponse
     code: "pm.test(\"статус 201\", () => {\r
