@@ -6,6 +6,8 @@ import java.util.Optional;
 import ordersService.domain.entity.order.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -14,5 +16,6 @@ public interface OrdersRepository extends JpaRepository<Order, String> {
   List<Order> findByUserIdOrderByCreatedAtDesc(String userId);
 
   @Lock(LockModeType.PESSIMISTIC_WRITE)
-  Optional<Order> findById(String id);
+  @Query("SELECT o FROM Order o WHERE o.id = :id")
+  Optional<Order> findByIdForUpdate(@Param("id") String id);
 }

@@ -34,7 +34,7 @@ public class AccountService {
     if (amount.compareTo(BigDecimal.ZERO) <= 0) {
       throw new InvalidAmountException("Некорректная сумма для пополнения");
     }
-    Account account = accountsRepository.findByUserId(userId)
+    Account account = accountsRepository.findByUserIdForUpdate(userId)
         .orElseThrow(() -> new AccountNotFoundException("Пользователь и счет не найден"));
 
     BigDecimal newBalance = account.getBalance().add(amount).setScale(2, RoundingMode.HALF_UP);

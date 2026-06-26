@@ -9,14 +9,12 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ordersService.domain.entity.order.Order;
-import ordersService.domain.entity.productType.ProductType;
 import ordersService.domain.response.OrderResponse;
 import ordersService.exceptions.order.OrderNotFoundException;
 import ordersService.kafka.event.OrderPaymentRequestedEvent;
 import ordersService.kafka.outbox.OrderOutbox;
 import ordersService.kafka.repository.OrderOutboxRepository;
 import ordersService.repository.OrdersRepository;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,29 +26,8 @@ public class OrderService {
   private final OrdersRepository ordersRepository;
   private final OrderOutboxRepository outboxRepository;
   private final ObjectMapper objectMapper;
+  private final PriceCalculation priceCalculation;
 
-  @Value("${rates.price-to-aoi.archive}")
-  private Integer archiveRate;
-
-  @Value("${rates.price-to-aoi.tasking}")
-  private Integer taskingRate;
-
-  @Value("${rates.price-to-aoi.monitoring}")
-  private Integer monitoringRate;
-
-  public BigDecimal calculatePrice(String productType, JsonNode aoi) {
-    ProductType type;
-    try {
-      type = ProductType.valueOf(productType);
-    } catch (IllegalArgumentException e) {
-      throw new IllegalArgumentException("Неизвестный тип продукта: " + productType);
-    }
-    return switch (type) {
-      case ProductType.ARCHIVE -> PriceCalculation.orderPrice(aoi.asDouble(), archiveRate);
-      case TASKING -> PriceCalculation.orderPrice(aoi.asDouble(), taskingRate);
-      case MONITORING -> PriceCalculation.orderPrice(aoi.asDouble(), monitoringRate);
-    };
-  }
 
   @Transactional
   public Order createOrder(String userId, String productType, JsonNode payload) {
@@ -62,7 +39,7 @@ public class OrderService {
     order.setStatus("CREATED");
     order.setProductType(productType);
 
-    BigDecimal price = calculatePrice(productType, payload.get("aoi"));
+    BigDecimal price = priceCalculation.calculatePrice(productType, payload.get("aoi"));
     order.setPrice(price);
     order.setCreatedAt(Instant.now());
 
@@ -107,7 +84,7 @@ public class OrderService {
 
   @Transactional
   public void completePayment(String orderId) {
-    Order order = ordersRepository.findById(orderId)
+    Order order = ordersRepository.findByIdForUpdate(orderId)
         .orElseThrow(() -> new OrderNotFoundException("Заказ не найден по Id: " + orderId));
     order.setStatus("PAID");
     ordersRepository.save(order);
@@ -116,7 +93,7 @@ public class OrderService {
 
   @Transactional
   public void failPayment(String orderId, String failureReason) {
-    Order order = ordersRepository.findById(orderId)
+    Order order = ordersRepository.findByIdForUpdate(orderId)
         .orElseThrow(() -> new OrderNotFoundException("Заказ не найден по Id: " + orderId));
     order.setStatus("PAYMENT_FAILED");
     order.setFailureReason(failureReason);
@@ -127,7 +104,7 @@ public class OrderService {
 
   @Transactional
   public void rejectOrder(String orderId, String failureReason) {
-    Order order = ordersRepository.findById(orderId)
+    Order order = ordersRepository.findByIdForUpdate(orderId)
         .orElseThrow(() -> new OrderNotFoundException("Заказ не найден по Id: " + orderId));
     order.setStatus("REJECTED");
     order.setFailureReason(failureReason);

@@ -1,0 +1,16 @@
+name: OrbitaMarketEnv
+values:
+  - key: base_url
+    value: ''
+  - key: orders_url
+    value: ''
+  - key: payments_url
+    value: ''
+  - key: balance
+    value: ''
+  - key: order_id
+    value: ''
+  - key: user_id
+    value: ''
+  - key: account_id
+    value: ''

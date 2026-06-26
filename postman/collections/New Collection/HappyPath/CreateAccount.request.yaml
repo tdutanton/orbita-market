@@ -1,0 +1,24 @@
+$kind: http-request
+name: CreateAccount
+url: "{{payments_url}}/accounts"
+method: POST
+headers:
+  X-User-Id: "{{user_id}}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"статус 201\", () => {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      setTimeout(() => {}, 2000);"
+    language: text/javascript
+  - type: beforeRequest
+    code: "const userId = crypto.randomUUID();\r
+
+      pm.environment.set(\"user_id\", userId);"
+    language: text/javascript
+order: 1782464911352
