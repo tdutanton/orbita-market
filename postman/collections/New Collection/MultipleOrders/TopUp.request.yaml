@@ -1,0 +1,18 @@
+$kind: http-request
+url: "{{payments_url}}/accounts/top-up"
+method: POST
+headers:
+  X-User-Id: "{{user_id}}"
+  Connection: close
+body:
+  type: json
+  content: "{\r\n  \"value\": 1000\r\n}"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"статус 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });"
+    language: text/javascript
+order: 4365045493973821
