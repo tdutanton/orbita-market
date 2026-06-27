@@ -1,5 +1,4 @@
 $kind: http-request
-name: CreateOrder
 url: "{{orders_url}}/orders"
 method: POST
 headers:
@@ -8,6 +7,8 @@ headers:
 body:
   type: json
   content: "{\r
+
+    \  \"orderId\": \"{{test_order_id}}\",\r
 
     \  \"productType\": \"ARCHIVE\",\r
 
@@ -24,16 +25,10 @@ body:
     }"
 scripts:
   - type: afterResponse
-    code: "pm.test(\"статус 201\", () => {\r
+    code: "pm.test(\"статус 500\", () => {\r
 
-      \    pm.response.to.have.status(201);\r
+      \    pm.response.to.have.status(500);\r
 
-      });\r
-
-      \r
-
-      const response = pm.response.json();\r
-
-      pm.environment.set(\"order_id\", response.order_id);"
+      });"
     language: text/javascript
-order: 4000
+order: 4451486734120623

@@ -4,6 +4,7 @@ url: "{{orders_url}}/{{order_id}}"
 method: GET
 headers:
   X-User-Id: "{{user_id}}"
+  Connection: close
 scripts:
   - type: afterResponse
     code: "const response = pm.response.json();\r

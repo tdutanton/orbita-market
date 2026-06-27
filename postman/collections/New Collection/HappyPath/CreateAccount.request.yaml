@@ -4,6 +4,7 @@ url: "{{payments_url}}/accounts"
 method: POST
 headers:
   X-User-Id: "{{user_id}}"
+  Connection: close
 scripts:
   - type: afterResponse
     code: "pm.test(\"статус 201\", () => {\r

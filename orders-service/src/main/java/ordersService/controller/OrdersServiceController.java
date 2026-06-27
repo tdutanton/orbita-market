@@ -69,7 +69,8 @@ public class OrdersServiceController {
       throw new InvalidPayloadException("Некорректная составляющая payload");
     }
     try {
-      Order order = orderService.createOrder(userId, request.productType(), request.payload());
+      Order order = orderService.createOrder(userId, request.orderId(), request.productType(),
+          request.payload());
       return ResponseEntity.status(HttpStatus.CREATED).body(OrderResponse.from(order));
     } catch (Exception e) {
       log.error("Ошибка при создании заказа", e);

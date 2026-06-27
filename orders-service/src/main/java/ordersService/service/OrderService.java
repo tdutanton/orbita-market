@@ -30,8 +30,11 @@ public class OrderService {
 
 
   @Transactional
-  public Order createOrder(String userId, String productType, JsonNode payload) {
-    String orderId = UUID.randomUUID().toString();
+  public Order createOrder(String userId, String orderIdFromClient, String productType,
+      JsonNode payload) {
+    String orderId = (orderIdFromClient != null && !orderIdFromClient.isBlank())
+        ? orderIdFromClient
+        : UUID.randomUUID().toString();
     Order order = new Order();
     order.setId(orderId);
     order.setUserId(userId);

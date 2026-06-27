@@ -4,6 +4,7 @@ url: "{{payments_url}}/accounts/top-up"
 method: POST
 headers:
   X-User-Id: "{{user_id}}"
+  Connection: close
 body:
   type: json
   content: "{\r\n  \"value\": 150\r\n}"

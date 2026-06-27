@@ -1,5 +1,4 @@
 $kind: http-request
-name: GetBalance
 url: "{{payments_url}}/accounts/balance"
 method: GET
 headers:
@@ -25,4 +24,4 @@ scripts:
 
       });"
     language: text/javascript
-order: 5000
+order: 4461308200127061

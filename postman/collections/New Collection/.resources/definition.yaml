@@ -1,11 +1,2 @@
 $kind: collection
 name: New Collection
-scripts:
-  - type: http:beforeRequest
-    code: "pm.request.headers.add({\r
-
-      \    key: 'Connection',\r
-
-      \    value: 'close'\r
-
-      })"

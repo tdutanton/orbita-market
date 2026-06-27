@@ -1,5 +1,4 @@
 $kind: http-request
-name: CreateAccount
 url: "{{payments_url}}/accounts"
 method: POST
 headers:
@@ -22,4 +21,4 @@ scripts:
 
       pm.environment.set(\"user_id\", userId);"
     language: text/javascript
-order: 1782544657007
+order: 3117177684988707

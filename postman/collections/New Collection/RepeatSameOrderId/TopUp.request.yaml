@@ -1,5 +1,4 @@
 $kind: http-request
-name: TopUp
 url: "{{payments_url}}/accounts/top-up"
 method: POST
 headers:
@@ -16,4 +15,4 @@ scripts:
 
       });"
     language: text/javascript
-order: 3000
+order: 3526405361967646

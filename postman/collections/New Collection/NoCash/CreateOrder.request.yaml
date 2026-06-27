@@ -4,6 +4,7 @@ url: "{{orders_url}}/orders"
 method: POST
 headers:
   X-User-Id: "{{user_id}}"
+  Connection: close
 body:
   type: json
   content: "{\r

@@ -4,6 +4,7 @@ url: "{{payments_url}}/accounts/balance"
 method: GET
 headers:
   X-User-Id: "{{user_id}}"
+  Connection: close
 scripts:
   - type: afterResponse
     code: "pm.test(\"статус 200\", () => {\r
@@ -18,7 +19,7 @@ scripts:
 
       \r
 
-      pm.test(\"New Balance is still the same 150\", function () {\r
+      pm.test(\"New Balance is same 150\", function () {\r
 
       \    pm.expect(response.balance).to.eql(150.0);\r
 
