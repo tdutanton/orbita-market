@@ -10,11 +10,15 @@ scripts:
 
       \    pm.response.to.have.status(201);\r
 
-      });"
+      });\r
+
+      \r
+
+      setTimeout(() => {}, 2000);"
     language: text/javascript
   - type: beforeRequest
     code: "const userId = crypto.randomUUID();\r
 
       pm.environment.set(\"user_id\", userId);"
     language: text/javascript
-order: 2000
+order: 1782544657007

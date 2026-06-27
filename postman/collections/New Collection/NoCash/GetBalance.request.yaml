@@ -18,10 +18,10 @@ scripts:
 
       \r
 
-      pm.test(\"New Balance is 700\", function () {\r
+      pm.test(\"New Balance is still the same 150\", function () {\r
 
-      \    pm.expect(response.balance).to.eql(700.0);\r
+      \    pm.expect(response.balance).to.eql(150.0);\r
 
       });"
     language: text/javascript
-order: 5000
+order: 4015689863130565

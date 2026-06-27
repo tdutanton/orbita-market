@@ -18,10 +18,10 @@ scripts:
 
       \r
 
-      pm.test(\"Order status is PAID\", function () {\r
+      pm.test(\"Order status is PAYMENT_FAILED\", function () {\r
 
-      \    pm.expect(response.status).to.eql(\"PAID\");\r
+      \    pm.expect(response.status).to.eql(\"PAYMENT_FAILED\");\r
 
       });"
     language: text/javascript
-order: 6000
+order: 4151908657671630
