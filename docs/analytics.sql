@@ -1,5 +1,6 @@
 -- перейти в db:
 -- docker compose exec orders-db psql -U postgres -d orders_db
+-- порт 5433 (для подключения со сторонних клиентов типа dbeaver)
 -- кто и сколько купил (пользователь, количество заказов, сумма потраченных денег)
 -- db - orders_db
 -- table - orders
@@ -23,6 +24,7 @@ LIMIT 10;
 
 -- перейти в db:
 -- docker compose exec orders-db psql -U postgres -d orders_db
+-- порт 5433 (для подключения со сторонних клиентов типа dbeaver)
 -- сводка по типам заказов
 -- (тип продукта - по типам количество заказов, количество покупателей, сумма потраченных денег, средняя цена, минимальная и максимальная цена
 -- db - orders_db
@@ -54,6 +56,7 @@ ORDER BY total_spent_geocredits DESC;
 
 -- перейти в db:
 -- docker compose exec payments-db psql -U postgres -d payments_db
+-- порт 5432 (для подключения со сторонних клиентов типа dbeaver)
 -- данные по платежам (по статусам - количество платежей, сумма платежей, процент среди статусов)
 -- db - payments_db
 -- table - payment_inbox_events
