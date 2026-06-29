@@ -78,7 +78,7 @@ public class OrdersServiceController {
     }
   }
 
-  @GetMapping
+  @GetMapping("/orders")
   @Operation(summary = "Получение заказов по user id")
   @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Список заказов успешно загружен",
