@@ -1,3 +1,5 @@
+-- перейти в db:
+-- docker compose exec orders-db psql -U postgres -d orders_db
 -- кто и сколько купил (пользователь, количество заказов, сумма потраченных денег)
 -- db - orders_db
 -- table - orders
@@ -19,6 +21,8 @@ FROM user_stats
 ORDER BY total_spent_geocredits DESC
 LIMIT 10;
 
+-- перейти в db:
+-- docker compose exec orders-db psql -U postgres -d orders_db
 -- сводка по типам заказов
 -- (тип продукта - по типам количество заказов, количество покупателей, сумма потраченных денег, средняя цена, минимальная и максимальная цена
 -- db - orders_db
@@ -48,6 +52,8 @@ SELECT
 FROM product_sales
 ORDER BY total_spent_geocredits DESC;
 
+-- перейти в db:
+-- docker compose exec payments-db psql -U postgres -d payments_db
 -- данные по платежам (по статусам - количество платежей, сумма платежей, процент среди статусов)
 -- db - payments_db
 -- table - payment_inbox_events
