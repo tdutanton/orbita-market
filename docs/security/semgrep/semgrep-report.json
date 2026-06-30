@@ -1,0 +1,148 @@
+{
+  "version": "1.168.0",
+  "results": [],
+  "errors": [],
+  "paths": {
+    "scanned": [
+      "api-gateway\\build.gradle.kts",
+      "api-gateway\\settings.gradle.kts",
+      "api-gateway\\src\\main\\java\\gateway\\GatewayApp.java",
+      "orders-service\\build.gradle.kts",
+      "orders-service\\settings.gradle.kts",
+      "orders-service\\src\\main\\java\\ordersService\\controller\\GlobalExceptionHandler.java",
+      "orders-service\\src\\main\\java\\ordersService\\controller\\OrdersServiceController.java",
+      "orders-service\\src\\main\\java\\ordersService\\domain\\entity\\order\\Order.java",
+      "orders-service\\src\\main\\java\\ordersService\\domain\\entity\\productType\\ProductType.java",
+      "orders-service\\src\\main\\java\\ordersService\\domain\\request\\OrderRequest.java",
+      "orders-service\\src\\main\\java\\ordersService\\domain\\response\\ErrorResponse.java",
+      "orders-service\\src\\main\\java\\ordersService\\domain\\response\\OrderListResponse.java",
+      "orders-service\\src\\main\\java\\ordersService\\domain\\response\\OrderResponse.java",
+      "orders-service\\src\\main\\java\\ordersService\\exceptions\\dto\\ErrorCode.java",
+      "orders-service\\src\\main\\java\\ordersService\\exceptions\\order\\InternalErrorException.java",
+      "orders-service\\src\\main\\java\\ordersService\\exceptions\\order\\InvalidPayloadException.java",
+      "orders-service\\src\\main\\java\\ordersService\\exceptions\\order\\InvalidPriceException.java",
+      "orders-service\\src\\main\\java\\ordersService\\exceptions\\order\\MissingUserIdException.java",
+      "orders-service\\src\\main\\java\\ordersService\\exceptions\\order\\OrderNotFoundException.java",
+      "orders-service\\src\\main\\java\\ordersService\\exceptions\\order\\UnknownProductTypeException.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\config\\KafkaConfig.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\consumer\\PaymentResultConsumer.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\event\\OrderPaymentCompletedEvent.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\event\\OrderPaymentFailedEvent.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\event\\OrderPaymentRequestedEvent.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\inbox\\OrderInbox.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\outbox\\OrderOutbox.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\publisher\\OrderEventPublisher.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\repository\\OrderInboxEventRepository.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\repository\\OrderOutboxRepository.java",
+      "orders-service\\src\\main\\java\\ordersService\\kafka\\service\\OutboxService.java",
+      "orders-service\\src\\main\\java\\ordersService\\OrdersServiceApp.java",
+      "orders-service\\src\\main\\java\\ordersService\\repository\\OrdersRepository.java",
+      "orders-service\\src\\main\\java\\ordersService\\service\\OrderService.java",
+      "orders-service\\src\\main\\java\\ordersService\\service\\PayloadService.java",
+      "orders-service\\src\\main\\java\\ordersService\\service\\PriceCalculation.java",
+      "payments-service\\build.gradle.kts",
+      "payments-service\\settings.gradle.kts",
+      "payments-service\\src\\main\\java\\paymentsService\\controller\\GlobalExceptionHandler.java",
+      "payments-service\\src\\main\\java\\paymentsService\\controller\\PaymentsServiceController.java",
+      "payments-service\\src\\main\\java\\paymentsService\\domain\\entity\\account\\Account.java",
+      "payments-service\\src\\main\\java\\paymentsService\\domain\\request\\TopUpRequest.java",
+      "payments-service\\src\\main\\java\\paymentsService\\domain\\response\\AccountResponse.java",
+      "payments-service\\src\\main\\java\\paymentsService\\domain\\response\\BalanceResponse.java",
+      "payments-service\\src\\main\\java\\paymentsService\\domain\\response\\ErrorResponse.java",
+      "payments-service\\src\\main\\java\\paymentsService\\exceptions\\account\\AccountAlreadyExistsException.java",
+      "payments-service\\src\\main\\java\\paymentsService\\exceptions\\account\\AccountNotFoundException.java",
+      "payments-service\\src\\main\\java\\paymentsService\\exceptions\\account\\ImpossibleOperationException.java",
+      "payments-service\\src\\main\\java\\paymentsService\\exceptions\\account\\InvalidAmountException.java",
+      "payments-service\\src\\main\\java\\paymentsService\\exceptions\\account\\MissingUserIdException.java",
+      "payments-service\\src\\main\\java\\paymentsService\\exceptions\\dto\\ErrorCode.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\config\\KafkaConfig.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\consumer\\PaymentRequestConsumer.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\event\\OrderPaymentCompletedEvent.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\event\\OrderPaymentFailedEvent.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\event\\OrderPaymentRequestedEvent.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\inbox\\PaymentInbox.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\outbox\\PaymentOutbox.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\publisher\\PaymentEventPublisher.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\repository\\PaymentInboxEventRepository.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\repository\\PaymentOutboxEventRepository.java",
+      "payments-service\\src\\main\\java\\paymentsService\\kafka\\service\\OutboxService.java",
+      "payments-service\\src\\main\\java\\paymentsService\\PaymentsServiceApp.java",
+      "payments-service\\src\\main\\java\\paymentsService\\repository\\AccountsRepository.java",
+      "payments-service\\src\\main\\java\\paymentsService\\service\\AccountService.java",
+      "settings.gradle.kts"
+    ]
+  },
+  "time": {
+    "rules": [],
+    "rules_parse_time": 0.05643177032470703,
+    "profiling_times": {
+      "config_time": 0.24324893951416016,
+      "core_time": 0.9721555709838867,
+      "ignores_time": 0.0001392364501953125,
+      "total_time": 1.2403838634490967
+    },
+    "parsing_time": {
+      "total_time": 0,
+      "per_file_time": {
+        "mean": 0,
+        "std_dev": 0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0,
+        "count_ratio": 0
+      },
+      "very_slow_files": []
+    },
+    "scanning_time": {
+      "total_time": 2.005653142929077,
+      "per_file_time": {
+        "mean": 0.03038868398377391,
+        "std_dev": 0.0015273044578103512
+      },
+      "very_slow_stats": {
+        "time_ratio": 0,
+        "count_ratio": 0
+      },
+      "very_slow_files": []
+    },
+    "matching_time": {
+      "total_time": 0,
+      "per_file_and_rule_time": {
+        "mean": 0,
+        "std_dev": 0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0,
+        "count_ratio": 0
+      },
+      "very_slow_rules_on_files": []
+    },
+    "tainting_time": {
+      "total_time": 0,
+      "per_def_and_rule_time": {
+        "mean": 0,
+        "std_dev": 0
+      },
+      "very_slow_stats": {
+        "time_ratio": 0,
+        "count_ratio": 0
+      },
+      "very_slow_rules_on_defs": []
+    },
+    "fixpoint_timeouts": [],
+    "prefiltering": {
+      "project_level_time": 0,
+      "file_level_time": 0,
+      "rules_with_project_prefilters_ratio": 0,
+      "rules_with_file_prefilters_ratio": 0.9502948609941028,
+      "rules_selected_ratio": 0.09323223813535524,
+      "rules_matched_ratio": 0.09323223813535524
+    },
+    "targets": [],
+    "total_bytes": 0,
+    "max_memory_bytes": 263322240
+  },
+  "engine_requested": "OSS",
+  "skipped_rules": [],
+  "profiling_results": []
+}
