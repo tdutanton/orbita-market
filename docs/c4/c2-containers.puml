@@ -1,0 +1,41 @@
+@startuml C2 - Containers
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+title C2 — Containers: OrbitaMarket
+
+Person(operator, "Оператор ДЗЗ", "Заказывает снимки")
+Person(analyst, "Аналитик", "Просматривает данные")
+Person(admin, "Администратор", "Управляет системой")
+
+System_Boundary(orbita, "OrbitaMarket") {
+
+  Container(apiGateway, "API Gateway", "Spring Cloud Gateway", "Единая точка входа, маршрутизация /orders/** и /payments/**")
+
+  Container(ordersService, "Orders Service", "Spring Boot", "Управление заказами, outbox/inbox pattern")
+  Container(paymentsService, "Payments Service", "Spring Boot", "Управление счетами и платежами")
+
+  ContainerDb(ordersDb, "Orders DB", "PostgreSQL 15", "Хранение заказов, outbox/inbox")
+  ContainerDb(paymentsDb, "Payments DB", "PostgreSQL 15", "Хранение счетов, платежей, inbox")
+
+  Container(messageBroker, "Kafka", "Apache Kafka (Kraft)", "Асинхронный обмен событиями между сервисами")
+}
+
+Rel(operator, apiGateway, "Заказы, оплата", "HTTPS")
+Rel(analyst, apiGateway, "Просмотр данных", "HTTPS")
+Rel(admin, apiGateway, "Управление", "HTTPS")
+
+Rel(apiGateway, ordersService, "Маршрутизация /orders/**", "HTTP")
+Rel(apiGateway, paymentsService, "Маршрутизация /payments/**", "HTTP")
+
+Rel(ordersService, ordersDb, "Чтение/запись", "JDBC")
+Rel(paymentsService, paymentsDb, "Чтение/запись", "JDBC")
+
+Rel(ordersService, messageBroker, "Публикация OrderPaymentRequestedEvent", "async")
+Rel(messageBroker, paymentsService, "Доставка OrderPaymentRequestedEvent", "async")
+Rel(paymentsService, messageBroker, "Публикация OrderPaymentCompletedEvent / OrderPaymentFailedEvent", "async")
+Rel(messageBroker, ordersService, "Доставка результата оплаты", "async")
+
+SHOW_LEGEND()
+@enduml
