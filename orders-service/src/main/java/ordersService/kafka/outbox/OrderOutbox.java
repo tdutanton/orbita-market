@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -49,6 +50,9 @@ public class OrderOutbox {
 
   @Column(name = "created_at", updatable = false)
   private Instant createdAt;
+
+  @Version
+  private Long version = 0L;
 
   public OrderOutbox(String eventId, String orderId, String eventType, String payload) {
     this.eventId = eventId;

@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ordersService.domain.entity.order.Order;
 import ordersService.domain.entity.productType.ProductType;
 import ordersService.domain.request.OrderRequest;
 import ordersService.domain.response.ErrorResponse;
@@ -69,9 +68,10 @@ public class OrdersServiceController {
       throw new InvalidPayloadException("Некорректная составляющая payload");
     }
     try {
-      Order order = orderService.createOrder(userId, request.orderId(), request.productType(),
+      OrderResponse orderResponse = orderService.createOrder(userId, request.orderId(),
+          request.productType(),
           request.payload());
-      return ResponseEntity.status(HttpStatus.CREATED).body(OrderResponse.from(order));
+      return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     } catch (Exception e) {
       log.error("Ошибка при создании заказа", e);
       throw new InternalErrorException("Ошибка при создании заказа");

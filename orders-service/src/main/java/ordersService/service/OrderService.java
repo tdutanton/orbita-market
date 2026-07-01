@@ -30,7 +30,7 @@ public class OrderService {
 
 
   @Transactional
-  public Order createOrder(String userId, String orderIdFromClient, String productType,
+  public OrderResponse createOrder(String userId, String orderIdFromClient, String productType,
       JsonNode payload) {
     String orderId = (orderIdFromClient != null && !orderIdFromClient.isBlank())
         ? orderIdFromClient
@@ -66,7 +66,8 @@ public class OrderService {
     log.info("Заказу {} присвоен статус PAYMENT_PENDING", orderId);
     ordersRepository.save(order);
     log.info("ordersRepository обновил заказ {} со статусом PAYMENT_PENDING", orderId);
-    return order;
+    return new OrderResponse(order.getId(), order.getStatus(), order.getProductType(),
+        order.getPrice(), order.getCreatedAt());
   }
 
   public List<OrderResponse> getOrdersByUser(String userId) {

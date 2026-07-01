@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import ordersService.kafka.outbox.OrderOutbox;
 import ordersService.kafka.repository.OrderOutboxRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,10 @@ public class OutboxService {
         outboxRepository.save(msg);
         log.debug("Kafka: опубликовано исходящее сообщение {} для заказа {}", msg.getEventId(),
             msg.getOrderId());
+      } catch (OptimisticLockingFailureException e) {
+        log.warn(
+            "Kafka: конкурентное обновление, другое подключение уже обработало сообщение {} для заказа {}",
+            msg.getEventId(), msg.getOrderId());
       } catch (Exception e) {
         log.error("Kafka: ошибка при публикации исходящего сообщения {} для заказа {}",
             msg.getEventId(), msg.getOrderId(), e);
