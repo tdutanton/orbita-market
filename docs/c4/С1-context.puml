@@ -1,0 +1,18 @@
+@startuml C1 - System Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title C1 — System Context: OrbitaMarket
+
+Person(operator, "Оператор ДЗЗ", "Заказ снимков (создание заказов)")
+Person(analyst, "Аналитик", "Просмотр и анализ данных в БД")
+Person(admin, "Администратор", "Управление аккаунтами")
+
+System_Boundary(orbita, "OrbitaMarket") {
+  System(apiGateway, "API Gateway", "Единая точка входа, маршрутизация запросов")
+}
+
+Rel(operator, apiGateway, "Заказы, оплата")
+Rel(analyst, apiGateway, "Просмотр данных, отчеты")
+Rel(admin, apiGateway, "Управление, администрирование")
+
+@enduml
