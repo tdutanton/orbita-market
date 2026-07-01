@@ -23,16 +23,21 @@ public class AccountService {
   private final AccountsRepository accountsRepository;
 
   @Transactional
-  public Account createAccount(String userId) {
+  public AccountResponse createAccount(String userId) {
     if (accountsRepository.findById(userId).isPresent()) {
       throw new AccountAlreadyExistsException("Счет уже создан для пользователя: " + userId);
     }
     Account account = new Account(userId);
-    return accountsRepository.save(account);
+    Account savedAccount = accountsRepository.save(account);
+    return new AccountResponse(
+        savedAccount.getUserId(),
+        savedAccount.getBalance(),
+        savedAccount.getCurrency()
+    );
   }
 
   @Transactional
-  public Account deposit(String userId, BigDecimal amount) {
+  public AccountResponse deposit(String userId, BigDecimal amount) {
     if (amount.compareTo(BigDecimal.ZERO) <= 0) {
       throw new InvalidAmountException("Некорректная сумма для пополнения");
     }
@@ -41,7 +46,12 @@ public class AccountService {
 
     BigDecimal newBalance = account.getBalance().add(amount).setScale(2, RoundingMode.HALF_UP);
     account.setBalance(newBalance);
-    return accountsRepository.save(account);
+    Account savedAccount = accountsRepository.save(account);
+    return new AccountResponse(
+        savedAccount.getUserId(),
+        savedAccount.getBalance(),
+        savedAccount.getCurrency()
+    );
   }
 
   @Transactional(readOnly = true)

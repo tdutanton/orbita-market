@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import paymentsService.domain.entity.account.Account;
 import paymentsService.domain.request.TopUpRequest;
 import paymentsService.domain.response.AccountResponse;
 import paymentsService.domain.response.BalanceResponse;
@@ -48,10 +47,11 @@ public class PaymentsServiceController {
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
-    Account account = accountService.createAccount(userId);
+    AccountResponse accountResponse = accountService.createAccount(userId);
     return ResponseEntity.status(HttpStatus.CREATED)
         .body(
-            new AccountResponse(account.getUserId(), account.getBalance(), account.getCurrency()));
+            new AccountResponse(accountResponse.userId(), accountResponse.balance(),
+                accountResponse.currency()));
   }
 
   @PostMapping("/accounts/top-up")
@@ -72,9 +72,10 @@ public class PaymentsServiceController {
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
-    Account account = accountService.deposit(userId, request.value());
+    AccountResponse accountResponse = accountService.deposit(userId, request.value());
     return ResponseEntity.ok(
-        new BalanceResponse(account.getUserId(), account.getBalance(), account.getCurrency()));
+        new BalanceResponse(accountResponse.userId(), accountResponse.balance(),
+            accountResponse.currency()));
   }
 
   @GetMapping("/accounts/balance")
