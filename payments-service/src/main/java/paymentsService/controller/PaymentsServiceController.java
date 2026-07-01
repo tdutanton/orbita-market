@@ -50,7 +50,8 @@ public class PaymentsServiceController {
     }
     Account account = accountService.createAccount(userId);
     return ResponseEntity.status(HttpStatus.CREATED)
-        .body(new AccountResponse(account.getUserId(), account.getBalance()));
+        .body(
+            new AccountResponse(account.getUserId(), account.getBalance(), account.getCurrency()));
   }
 
   @PostMapping("/accounts/top-up")
@@ -92,9 +93,10 @@ public class PaymentsServiceController {
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
-    Account account = accountService.getAccount(userId);
+    AccountResponse accountResponse = accountService.getAccount(userId);
     return ResponseEntity.ok(
-        new BalanceResponse(account.getUserId(), account.getBalance(), account.getCurrency()));
+        new BalanceResponse(accountResponse.userId(), accountResponse.balance(),
+            accountResponse.currency()));
   }
 
   @GetMapping("/accounts/overview")
@@ -108,9 +110,9 @@ public class PaymentsServiceController {
           content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
   })
   public ResponseEntity<List<AccountResponse>> overview() {
-    List<Account> accounts = accountService.getAllAccounts();
-    List<AccountResponse> responses = accounts.stream()
-        .map(account -> new AccountResponse(account.getUserId(), account.getBalance()))
+    List<AccountResponse> responses = accountService.getAllAccounts().stream()
+        .map(
+            account -> new AccountResponse(account.userId(), account.balance(), account.currency()))
         .toList();
     return ResponseEntity.ok(responses);
   }

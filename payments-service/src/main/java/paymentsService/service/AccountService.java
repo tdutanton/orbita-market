@@ -2,12 +2,14 @@ package paymentsService.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import paymentsService.domain.entity.account.Account;
+import paymentsService.domain.response.AccountResponse;
 import paymentsService.exceptions.account.AccountAlreadyExistsException;
 import paymentsService.exceptions.account.AccountNotFoundException;
 import paymentsService.exceptions.account.InvalidAmountException;
@@ -43,14 +45,21 @@ public class AccountService {
   }
 
   @Transactional(readOnly = true)
-  public Account getAccount(String userId) {
-    return accountsRepository.findById(userId)
+  public AccountResponse getAccount(String userId) {
+    Account account = accountsRepository.findById(userId)
         .orElseThrow(() -> new AccountNotFoundException("Пользователь и счет не найден"));
+    return new AccountResponse(account.getUserId(), account.getBalance(), account.getCurrency());
   }
 
   @Transactional(readOnly = true)
-  public List<Account> getAllAccounts() {
-    return accountsRepository.findAll();
+  public List<AccountResponse> getAllAccounts() {
+    List<Account> accounts = accountsRepository.findAll();
+    List<AccountResponse> result = new ArrayList<>();
+    for (Account account : accounts) {
+      result.add(
+          new AccountResponse(account.getUserId(), account.getBalance(), account.getCurrency()));
+    }
+    return result;
   }
 }
 
