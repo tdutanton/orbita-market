@@ -21,8 +21,8 @@ scripts:
 
       pm.test(\"New Balance is 400\", function () {\r
 
-      \    pm.expect(response.balance).to.eql(700.0);\r
+      \    pm.expect(response.balance).to.eql(400.0);\r
 
       });"
     language: text/javascript
-order: 5000
+order: 6239

@@ -35,4 +35,4 @@ scripts:
 
       pm.environment.set(\"order_id\", response.order_id);"
     language: text/javascript
-order: 4381877432404129
+order: 3000

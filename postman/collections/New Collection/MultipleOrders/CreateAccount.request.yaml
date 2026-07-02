@@ -17,4 +17,4 @@ scripts:
 
       pm.environment.set(\"user_id\", userId);"
     language: text/javascript
-order: 4074858022437053
+order: 1000
