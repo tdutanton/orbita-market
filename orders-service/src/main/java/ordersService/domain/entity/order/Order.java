@@ -19,6 +19,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import org.springframework.data.domain.Persistable;
 
 @Entity
 @Table(name = "orders")
@@ -28,7 +29,7 @@ import org.hibernate.type.SqlTypes;
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
-public class Order {
+public class Order implements Persistable<String> {
 
   @Id
   @Column(name = "id")
@@ -61,7 +62,12 @@ public class Order {
   private Instant updatedAt;
 
   @Version
-  private Long version = 0L;
+  private Long version;
+
+  @Override
+  public boolean isNew() {
+    return version == null;
+  }
 
   @PrePersist
   protected void onCreate() {

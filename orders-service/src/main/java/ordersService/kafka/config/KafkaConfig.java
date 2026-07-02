@@ -60,6 +60,7 @@ public class KafkaConfig {
         .build();
   }
 
+  // создание фабрики для создания kafka-продюсеров (генерирует данные и отправляет в топики)
   @Bean
   public ProducerFactory<String, String> producerFactory() {
     Map<String, Object> config = new HashMap<>();
@@ -82,6 +83,7 @@ public class KafkaConfig {
     return new DefaultKafkaProducerFactory<>(config);
   }
 
+  // класс-шаблон создает продюсера и отправляет данные в топики
   @Bean
   public KafkaTemplate<String, String> kafkaTemplate() {
     return new KafkaTemplate<>(producerFactory());
@@ -114,11 +116,14 @@ public class KafkaConfig {
     return new DefaultKafkaConsumerFactory<>(config);
   }
 
+  // отвечает за создание и настройку слушателей kafka
   @Bean
   public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
     ConcurrentKafkaListenerContainerFactory<String, String> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
+    // связывает с настройками, заданными в consumerFactory()
     factory.setConsumerFactory(consumerFactory());
+    // ручной режим подтверждения
     factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
     return factory;
   }

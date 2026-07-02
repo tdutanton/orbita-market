@@ -1,5 +1,6 @@
 package ordersService.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
@@ -53,14 +54,15 @@ public class OrderService {
     String eventId = UUID.randomUUID().toString();
     var event = new OrderPaymentRequestedEvent(eventId, orderId, userId, price, Instant.now());
 
+    String eventJson;
     try {
-      String eventJson = objectMapper.writeValueAsString(event);
-      OrderOutbox outbox = new OrderOutbox(eventId, orderId, "ORDER_PAYMENT_REQUESTED", eventJson);
-      outboxRepository.save(outbox);
-      log.info("В outboxRepository отправлен outbox event для заказа {}", orderId);
-    } catch (Exception e) {
-      log.error("Ошибка при сериализации outbox event для заказа {}", orderId, e);
+      eventJson = objectMapper.writeValueAsString(event);
+    } catch (JsonProcessingException e) {
+      throw new RuntimeException("Ошибка сериализации outbox event", e);
     }
+    OrderOutbox outbox = new OrderOutbox(eventId, orderId, "ORDER_PAYMENT_REQUESTED", eventJson);
+    outboxRepository.save(outbox);
+    log.info("В outboxRepository отправлен outbox event для заказа {}", orderId);
 
     order.setStatus("PAYMENT_PENDING");
     log.info("Заказу {} присвоен статус PAYMENT_PENDING", orderId);
