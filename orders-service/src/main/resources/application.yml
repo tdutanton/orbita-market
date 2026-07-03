@@ -40,6 +40,10 @@ spring:
     outbox-delay-msec: 2000
     max-retry-count: 10
 
+logging:
+  level:
+    org.apache.kafka: WARN
+
 rates:
   price-to-aoi:
     archive: 100
