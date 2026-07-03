@@ -26,7 +26,7 @@ public class OutboxService {
   @Scheduled(fixedDelayString = "${spring.kafka.outbox-delay-msec}")
   @Transactional
   public void processOutbox() {
-    log.info("Kafka OutboxService - вызов processOutbox по расписанию");
+    //    log.info("Kafka OutboxService - вызов processOutbox по расписанию");
     List<OrderOutbox> pending = outboxRepository.findByStatusOrderByCreatedAtAsc("PENDING");
     // отправка каждого события в kafka
     for (OrderOutbox outbox : pending) {
