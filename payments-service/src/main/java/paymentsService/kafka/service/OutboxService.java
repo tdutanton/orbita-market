@@ -1,6 +1,7 @@
 package paymentsService.kafka.service;
 
 import java.time.Instant;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -24,8 +25,8 @@ public class OutboxService {
   @Transactional
   public void processOutbox() {
     log.info("Kafka OutboxService - вызов processOutbox по расписанию");
-    // запрос макс 10 записей со статусом PENDING (отсортировано по дате создания)
-    var pending = outboxRepository.findTop10ByStatusOrderByCreatedAtAsc("PENDING");
+    // запрос записей со статусом PENDING (отсортировано по дате создания)
+    List<PaymentOutbox> pending = outboxRepository.findByStatusOrderByCreatedAtAsc("PENDING");
     // отправка каждого события в kafka
     for (PaymentOutbox outbox : pending) {
       try {

@@ -1,5 +1,6 @@
 package ordersService.kafka.service;
 
+import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,19 +27,35 @@ public class OutboxService {
   @Transactional
   public void processOutbox() {
     log.info("Kafka OutboxService - вызов processOutbox по расписанию");
-    List<OrderOutbox> unsent = outboxRepository.findBySentFalseOrderByCreatedAtAsc();
-
-    for (OrderOutbox msg : unsent) {
+    List<OrderOutbox> pending = outboxRepository.findByStatusOrderByCreatedAtAsc("PENDING");
+    // отправка каждого события в kafka
+    for (OrderOutbox outbox : pending) {
       try {
-        kafkaTemplate.send(paymentRequestedTopic, msg.getOrderId(), msg.getPayload());
-        msg.setSent(true);
-        outboxRepository.save(msg);
-        log.info("Kafka OutboxService - направлено outbox событие {} для заказа {}",
-            msg.getEventId(),
-            msg.getOrderId());
+        kafkaTemplate.send(paymentRequestedTopic, outbox.getOrderId(), outbox.getPayload()).get();
+        // меняется статус с pending на sent
+        outbox.setStatus("SENT");
+        outbox.setSentAt(Instant.now());
+        outboxRepository.save(outbox);
+        log.info(
+            "Kafka OutboxService - направлено outbox событие {} для заказа {}, изменен статус на SENT",
+            outbox.getEventId(),
+            outbox.getOrderId());
       } catch (Exception e) {
-        log.error("Kafka OutboxService - ошибка в outbox сервисе {} для заказа {}",
-            msg.getEventId(), msg.getOrderId(), e);
+        outbox.setRetryCount(outbox.getRetryCount() + 1);
+        if (outbox.getRetryCount() >= 10) {
+          outbox.setStatus("FAILED");
+          log.error("Kafka OutboxService - id {} отказ после {} попыток, изменен статус на FAILED",
+              outbox.getId(),
+              outbox.getRetryCount());
+        } else {
+          log.warn("Kafka OutboxService - ошибка в outbox сервисе {} (попыток {}): {}",
+              outbox.getId(),
+              outbox.getRetryCount(), e.getMessage());
+        }
+        outboxRepository.save(outbox);
+        log.info("Kafka OutboxService - в catch Exception направлено outbox событие {} на топик {}",
+            outbox.getId(),
+            paymentRequestedTopic);
       }
     }
   }

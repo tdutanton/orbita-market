@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderOutboxRepository extends JpaRepository<OrderOutbox, Long> {
 
-  List<OrderOutbox> findBySentFalseOrderByCreatedAtAsc();
+  List<OrderOutbox> findByStatusOrderByCreatedAtAsc(String status);
 }

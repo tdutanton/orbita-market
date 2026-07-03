@@ -8,6 +8,6 @@ import paymentsService.kafka.outbox.PaymentOutbox;
 @Repository
 public interface PaymentOutboxEventRepository extends JpaRepository<PaymentOutbox, String> {
 
-  List<PaymentOutbox> findTop10ByStatusOrderByCreatedAtAsc(String status);
+  List<PaymentOutbox> findByStatusOrderByCreatedAtAsc(String status);
 }
 

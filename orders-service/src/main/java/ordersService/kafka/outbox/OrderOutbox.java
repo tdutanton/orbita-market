@@ -45,11 +45,17 @@ public class OrderOutbox {
   @Column(nullable = false, columnDefinition = "jsonb")
   private String payload;
 
-  @Column(nullable = false)
-  private Boolean sent = false;
+  @Column(name = "status", nullable = false)
+  private String status = "PENDING";
+
+  @Column(name = "retry_count", nullable = false)
+  private int retryCount = 0;
 
   @Column(name = "created_at", updatable = false)
   private Instant createdAt;
+
+  @Column(name = "sent_at")
+  private Instant sentAt;
 
   @Version
   private Long version = 0L;
@@ -59,7 +65,7 @@ public class OrderOutbox {
     this.orderId = orderId;
     this.eventType = eventType;
     this.payload = payload;
-    this.sent = false;
+    this.status = "PENDING";
     this.createdAt = Instant.now();
   }
 }
