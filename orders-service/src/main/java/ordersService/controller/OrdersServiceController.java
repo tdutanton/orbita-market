@@ -74,7 +74,6 @@ public class OrdersServiceController {
           request.payload());
       return ResponseEntity.status(HttpStatus.CREATED).body(orderResponse);
     } catch (Exception e) {
-      log.error("Ошибка при создании заказа", e);
       throw new InternalErrorException("Ошибка при создании заказа");
     }
   }

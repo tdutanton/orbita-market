@@ -22,7 +22,7 @@ public class OutboxService {
   @Value("${spring.kafka.topics.payment-requested}")
   private String paymentRequestedTopic;
 
-  @Scheduled(fixedDelay = 2000)
+  @Scheduled(fixedDelayString = "${spring.kafka.outbox-delay-msec}")
   @Transactional
   public void processOutbox() {
     log.info("Kafka OutboxService - вызов processOutbox по расписанию");

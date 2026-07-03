@@ -11,11 +11,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ordersService.domain.entity.order.Order;
 import ordersService.domain.response.OrderResponse;
+import ordersService.exceptions.order.InternalErrorException;
 import ordersService.exceptions.order.OrderNotFoundException;
 import ordersService.kafka.event.OrderPaymentRequestedEvent;
 import ordersService.kafka.outbox.OrderOutbox;
 import ordersService.kafka.repository.OrderOutboxRepository;
 import ordersService.repository.OrdersRepository;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,9 @@ public class OrderService {
     String orderId = (orderIdFromClient != null && !orderIdFromClient.isBlank())
         ? orderIdFromClient
         : UUID.randomUUID().toString();
+    if (ordersRepository.existsById(orderId)) {
+      throw new InternalErrorException("Заказ с таким ID уже существует");
+    }
     Order order = new Order();
     order.setId(orderId);
     order.setUserId(userId);
@@ -49,7 +54,14 @@ public class OrderService {
     order.setPrice(price);
     order.setCreatedAt(Instant.now());
 
-    ordersRepository.save(order);
+    // добавлено для корректной обработки попытки создания заказа с существующим id
+    // flush принудительно отправляет insert в orders db для исключения race condition
+    try {
+      ordersRepository.save(order);
+      ordersRepository.flush();
+    } catch (DataIntegrityViolationException e) {
+      throw new InternalErrorException("Заказ с таким ID уже существует (race condition) " + e);
+    }
     log.info("Order Service - создан заказ {}, присвоен статус CREATED в ordersRepository",
         orderId);
     String eventId = UUID.randomUUID().toString();

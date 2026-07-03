@@ -20,7 +20,7 @@ public class OutboxService {
   private final KafkaTemplate<String, String> kafkaTemplate;
 
   // запускается метод каждые 2 сек
-  @Scheduled(fixedDelay = 2000)
+  @Scheduled(fixedDelayString = "${spring.kafka.outbox-delay-msec}")
   @Transactional
   public void processOutbox() {
     log.info("Kafka OutboxService - вызов processOutbox по расписанию");

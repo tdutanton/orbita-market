@@ -37,6 +37,7 @@ spring:
       payment-requested: ${PAYMENT_REQUESTED_TOPIC:order.payment.requested}
       payment-completed: ${PAYMENT_COMPLETED_TOPIC:order.payment.completed}
       payment-failed: ${PAYMENT_FAILED_TOPIC:order.payment.failed}
+    outbox-delay-msec: 2000
 
 rates:
   price-to-aoi:
