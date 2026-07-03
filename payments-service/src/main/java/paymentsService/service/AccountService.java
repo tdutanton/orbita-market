@@ -21,14 +21,20 @@ import paymentsService.repository.AccountsRepository;
 public class AccountService {
 
   private final AccountsRepository accountsRepository;
+  private final AmountValidator amountValidator;
 
   @Transactional
   public AccountResponse createAccount(String userId) {
+    log.info("AccountService - вызов createAccount для пользователя {}", userId);
     if (accountsRepository.findById(userId).isPresent()) {
+      log.warn("AccountService - счет уже создан для пользователя {}, новый сделать нельзя",
+          userId);
       throw new AccountAlreadyExistsException("Счет уже создан для пользователя: " + userId);
     }
     Account account = new Account(userId);
     Account savedAccount = accountsRepository.save(account);
+    log.info("AccountService - создан счет для пользователя {}, сохранено в accountRepository",
+        userId);
     return new AccountResponse(
         savedAccount.getUserId(),
         savedAccount.getBalance(),
@@ -38,7 +44,9 @@ public class AccountService {
 
   @Transactional
   public AccountResponse deposit(String userId, BigDecimal amount) {
-    if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+    log.info("AccountService - вызов deposit для пользователя {} на сумму {}", userId,
+        amount);
+    if (amountValidator.isInvalidDepositAmount(amount)) {
       throw new InvalidAmountException("Некорректная сумма для пополнения");
     }
     Account account = accountsRepository.findByUserIdForUpdate(userId)
@@ -56,6 +64,7 @@ public class AccountService {
 
   @Transactional(readOnly = true)
   public AccountResponse getAccount(String userId) {
+    log.info("AccountService - вызов getAccount для пользователя {}", userId);
     Account account = accountsRepository.findById(userId)
         .orElseThrow(() -> new AccountNotFoundException("Пользователь и счет не найден"));
     return new AccountResponse(account.getUserId(), account.getBalance(), account.getCurrency());
@@ -63,6 +72,7 @@ public class AccountService {
 
   @Transactional(readOnly = true)
   public List<AccountResponse> getAllAccounts() {
+    log.info("AccountService - вызов getAllAccounts");
     List<Account> accounts = accountsRepository.findAll();
     List<AccountResponse> result = new ArrayList<>();
     for (Account account : accounts) {

@@ -16,6 +16,9 @@ management:
     health:
       show-details: always
 
+validate:
+  min-deposit-amount: 0.0
+
 spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:payments-db}:5432/payments_db?sslmode=disable&connectTimeout=10&socketTimeout=30
