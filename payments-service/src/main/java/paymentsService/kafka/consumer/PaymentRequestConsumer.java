@@ -90,7 +90,7 @@ public class PaymentRequestConsumer {
   }
 
   private void failPayment(OrderPaymentRequestedEvent event, String reason) {
-    log.info("KafkaConsumer - вызов failPaymentдля заказа {}: причина фейла {}", event.orderId(),
+    log.info("KafkaConsumer - вызов failPayment для заказа {}: причина фейла {}", event.orderId(),
         reason);
     markInboxProcessed(event.eventId(), "FAILED", reason);
     log.info("KafkaConsumer - вызов eventPublisher.publishFailed");
