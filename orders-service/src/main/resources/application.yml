@@ -38,6 +38,7 @@ spring:
       payment-completed: ${PAYMENT_COMPLETED_TOPIC:order.payment.completed}
       payment-failed: ${PAYMENT_FAILED_TOPIC:order.payment.failed}
     outbox-delay-msec: 2000
+    max-retry-count: 10
 
 rates:
   price-to-aoi:
