@@ -44,6 +44,7 @@ public class PaymentsServiceController {
           content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
   })
   public ResponseEntity<AccountResponse> createAccount(@RequestHeader("X-User-Id") String userId) {
+    log.info("Payments Controller - вызов createAccount");
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
@@ -69,6 +70,7 @@ public class PaymentsServiceController {
   public ResponseEntity<BalanceResponse> topUp(
       @RequestHeader("X-User-Id") String userId,
       @RequestBody TopUpRequest request) {
+    log.info("Payments Controller - вызов topUp");
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
@@ -91,6 +93,7 @@ public class PaymentsServiceController {
           content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
   })
   public ResponseEntity<BalanceResponse> getBalance(@RequestHeader("X-User-Id") String userId) {
+    log.info("Payments Controller - вызов getBalance");
     if (userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
@@ -111,6 +114,7 @@ public class PaymentsServiceController {
           content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
   })
   public ResponseEntity<List<AccountResponse>> overview() {
+    log.info("Payments Controller - вызов overview");
     List<AccountResponse> responses = accountService.getAllAccounts().stream()
         .map(
             account -> new AccountResponse(account.userId(), account.balance(), account.currency()))

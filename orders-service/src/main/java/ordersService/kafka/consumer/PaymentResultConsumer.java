@@ -25,10 +25,12 @@ public class PaymentResultConsumer {
   @KafkaListener(topics = "${spring.kafka.topics.payment-completed}", concurrency = "1")
   @Transactional
   public void consumeCompleted(String message, Acknowledgment ack) {
+    log.info("Kafka Consumer - вызов consumeCompleted");
     try {
       OrderPaymentCompletedEvent event = objectMapper.readValue(message,
           OrderPaymentCompletedEvent.class);
-      log.info("Kafka: поступило сообщение OrderPaymentCompleted: id заказа = {}, "
+      log.info(
+          "Kafka Consumer - consumeCompleted - поступило сообщение OrderPaymentCompleted: id заказа = {}, "
               + "стоимость = {}, "
               + "баланс после покупки = {}",
           event.orderId(), event.amount(), event.newBalance());
@@ -37,7 +39,8 @@ public class PaymentResultConsumer {
           event.eventId(), event.orderId(), "ORDER_PAYMENT_COMPLETED");
 
       if (inserted == 0) {
-        log.info("Kafka: дублирование сообщения {}, пропуск", event.eventId());
+        log.info("Kafka Consumer - consumeCompleted - дублирование сообщения {}, пропуск",
+            event.eventId());
         ack.acknowledge();
         return;
       }
@@ -45,17 +48,20 @@ public class PaymentResultConsumer {
       orderService.completePayment(event.orderId());
       ack.acknowledge();
     } catch (Exception e) {
-      log.error("Kafka: ошибка обработки сообщения OrderPaymentCompleted", e);
+      log.error(
+          "Kafka Consumer - consumeCompleted- ошибка обработки сообщения OrderPaymentCompleted", e);
     }
   }
 
   @KafkaListener(topics = "${spring.kafka.topics.payment-failed}", concurrency = "1")
   @Transactional
   public void consumeFailed(String message, Acknowledgment ack) {
+    log.info("Kafka Consumer - вызов consumeFailed");
     try {
       OrderPaymentFailedEvent event = objectMapper.readValue(message,
           OrderPaymentFailedEvent.class);
-      log.info("Kafka: поступило сообщение OrderPaymentFailed: id заказа = {}, причина = {}",
+      log.info(
+          "Kafka Consumer - consumeFailed - поступило сообщение OrderPaymentFailed: id заказа = {}, причина = {}",
           event.orderId(),
           event.failureReason());
 
@@ -63,7 +69,8 @@ public class PaymentResultConsumer {
           event.eventId(), event.orderId(), "ORDER_PAYMENT_FAILED");
 
       if (inserted == 0) {
-        log.info("Kafka: дублирование сообщения {}, пропуск", event.eventId());
+        log.info("Kafka Consumer - consumeFailed - дублирование сообщения {}, пропуск",
+            event.eventId());
         ack.acknowledge();
         return;
       }
@@ -71,7 +78,7 @@ public class PaymentResultConsumer {
       orderService.failPayment(event.orderId(), event.failureReason());
       ack.acknowledge();
     } catch (Exception e) {
-      log.error("Kafka: ошибка обработки платежа для заказа заказа", e);
+      log.error("Kafka Consumer - consumeFailed - ошибка обработки платежа для заказа заказа", e);
     }
   }
 }

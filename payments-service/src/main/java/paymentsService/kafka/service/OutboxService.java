@@ -22,10 +22,10 @@ public class OutboxService {
   // запускается метод каждые 2 сек
   @Scheduled(fixedDelay = 2000)
   @Transactional
-  public void relay() {
+  public void processOutbox() {
+    log.info("Kafka OutboxService - вызов processOutbox по расписанию");
     // запрос макс 10 записей со статусом PENDING (отсортировано по дате создания)
     var pending = outboxRepository.findTop10ByStatusOrderByCreatedAtAsc("PENDING");
-
     // отправка каждого события в kafka
     for (PaymentOutbox outbox : pending) {
       try {
@@ -34,17 +34,26 @@ public class OutboxService {
         outbox.setStatus("SENT");
         outbox.setSentAt(Instant.now());
         outboxRepository.save(outbox);
-        log.info("Направлено outbox событие {} на топик {}", outbox.getId(), outbox.getTopic());
+        log.info(
+            "Kafka OutboxService - направлено outbox событие {} на топик {}, изменен статус на SENT",
+            outbox.getId(),
+            outbox.getTopic());
       } catch (Exception e) {
         outbox.setRetryCount(outbox.getRetryCount() + 1);
         if (outbox.getRetryCount() >= 10) {
           outbox.setStatus("FAILED");
-          log.error("Outbox {} отказ после {} попыток", outbox.getId(), outbox.getRetryCount());
+          log.error("Kafka OutboxService - id {} отказ после {} попыток, изменен статус на FAILED",
+              outbox.getId(),
+              outbox.getRetryCount());
         } else {
-          log.warn("Ошибка в outbox сервисе {} (попыток {}): {}", outbox.getId(),
+          log.warn("Kafka OutboxService - ошибка в outbox сервисе {} (попыток {}): {}",
+              outbox.getId(),
               outbox.getRetryCount(), e.getMessage());
         }
         outboxRepository.save(outbox);
+        log.info("Kafka OutboxService - в catch Exception направлено outbox событие {} на топик {}",
+            outbox.getId(),
+            outbox.getTopic());
       }
     }
   }

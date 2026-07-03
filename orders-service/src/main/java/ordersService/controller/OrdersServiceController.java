@@ -53,6 +53,7 @@ public class OrdersServiceController {
   public ResponseEntity<OrderResponse> createOrder(
       @RequestHeader("X-User-Id") String userId,
       @RequestBody OrderRequest request) {
+    log.info("Order Controller - вызов createOrder");
     if (userId == null || userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
@@ -89,6 +90,7 @@ public class OrdersServiceController {
           content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
   })
   public ResponseEntity<OrderListResponse> getOrders(@RequestHeader("X-User-Id") String userId) {
+    log.info("Order Controller - вызов getOrders");
     if (userId == null || userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }
@@ -111,6 +113,8 @@ public class OrdersServiceController {
   public ResponseEntity<OrderResponse> getOrder(
       @RequestHeader("X-User-Id") String userId,
       @PathVariable String orderId) {
+    log.info("Order Controller - вызов getOrder для пользователя {} для заказа {}", userId,
+        orderId);
     if (userId == null || userId.isBlank()) {
       throw new MissingUserIdException("X-User-Id нет в заголовке");
     }

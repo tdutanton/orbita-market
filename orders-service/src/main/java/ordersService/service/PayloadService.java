@@ -3,9 +3,11 @@ package ordersService.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
 import ordersService.domain.entity.productType.ProductType;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class PayloadService {
 
@@ -14,6 +16,7 @@ public class PayloadService {
   private static final Set<String> MONITORING_FIELDS = Set.of("aoi", "cadence", "duration_days");
 
   static public String validatePayload(String productType, JsonNode payload) {
+    log.info("PayloadService - вызов validatePayload");
     Set<String> requiredFields = Set.of();
     ProductType type;
     try {

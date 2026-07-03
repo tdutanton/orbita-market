@@ -25,6 +25,7 @@ public class OutboxService {
   @Scheduled(fixedDelay = 2000)
   @Transactional
   public void processOutbox() {
+    log.info("Kafka OutboxService - вызов processOutbox по расписанию");
     List<OrderOutbox> unsent = outboxRepository.findBySentFalseOrderByCreatedAtAsc();
 
     for (OrderOutbox msg : unsent) {
@@ -32,10 +33,11 @@ public class OutboxService {
         kafkaTemplate.send(paymentRequestedTopic, msg.getOrderId(), msg.getPayload());
         msg.setSent(true);
         outboxRepository.save(msg);
-        log.debug("Kafka: опубликовано исходящее сообщение {} для заказа {}", msg.getEventId(),
+        log.info("Kafka OutboxService - направлено outbox событие {} для заказа {}",
+            msg.getEventId(),
             msg.getOrderId());
       } catch (Exception e) {
-        log.error("Kafka: ошибка при публикации исходящего сообщения {} для заказа {}",
+        log.error("Kafka OutboxService - ошибка в outbox сервисе {} для заказа {}",
             msg.getEventId(), msg.getOrderId(), e);
       }
     }

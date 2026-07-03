@@ -33,6 +33,8 @@ public class OrderService {
   @Transactional
   public OrderResponse createOrder(String userId, String orderIdFromClient, String productType,
       JsonNode payload) {
+    log.info("Order Service - вызов createOrder для пользователя {} product type {}", userId,
+        productType);
     String orderId = (orderIdFromClient != null && !orderIdFromClient.isBlank())
         ? orderIdFromClient
         : UUID.randomUUID().toString();
@@ -48,9 +50,8 @@ public class OrderService {
     order.setCreatedAt(Instant.now());
 
     ordersRepository.save(order);
-    log.info("В OrderService создан заказ {}", orderId);
-    log.info("Заказу {} присвоен статус CREATED", orderId);
-
+    log.info("Order Service - создан заказ {}, присвоен статус CREATED в ordersRepository",
+        orderId);
     String eventId = UUID.randomUUID().toString();
     var event = new OrderPaymentRequestedEvent(eventId, orderId, userId, price, Instant.now());
 
@@ -62,17 +63,20 @@ public class OrderService {
     }
     OrderOutbox outbox = new OrderOutbox(eventId, orderId, "ORDER_PAYMENT_REQUESTED", eventJson);
     outboxRepository.save(outbox);
-    log.info("В outboxRepository отправлен outbox event для заказа {}", orderId);
+    log.info(
+        "Order Service - в outboxRepository отправлен OrderOutbox с ORDER_PAYMENT_REQUESTED для заказа {}",
+        orderId);
 
     order.setStatus("PAYMENT_PENDING");
-    log.info("Заказу {} присвоен статус PAYMENT_PENDING", orderId);
     ordersRepository.save(order);
-    log.info("ordersRepository обновил заказ {} со статусом PAYMENT_PENDING", orderId);
+    log.info("Order Service - заказу {} присвоен статус PAYMENT_PENDING в ordersRepository",
+        orderId);
     return new OrderResponse(order.getId(), order.getStatus(), order.getProductType(),
         order.getPrice(), order.getCreatedAt());
   }
 
   public List<OrderResponse> getOrdersByUser(String userId) {
+    log.info("Order Service - вызов getOrdersByUser для пользователя {}", userId);
     return ordersRepository.findByUserIdOrderByCreatedAtDesc(userId)
         .stream()
         .map(OrderResponse::from)
@@ -80,6 +84,8 @@ public class OrderService {
   }
 
   public OrderResponse getOrderById(String orderId, String userId) {
+    log.info("Order Service - вызов getOrderById для пользователя {} для заказа {}", userId,
+        orderId);
     Order order = ordersRepository.findById(orderId)
         .orElseThrow(() -> new OrderNotFoundException("Заказ не найден по Id: " + orderId));
     if (!order.getUserId().equals(userId)) {
@@ -90,32 +96,39 @@ public class OrderService {
 
   @Transactional
   public void completePayment(String orderId) {
+    log.info("Order Service - вызов completePayment для заказа {}", orderId);
     Order order = ordersRepository.findByIdForUpdate(orderId)
         .orElseThrow(() -> new OrderNotFoundException("Заказ не найден по Id: " + orderId));
     order.setStatus("PAID");
     ordersRepository.save(order);
-    log.info("Заказ {} оплачен, присвоен статус PAID", orderId);
+    log.info(
+        "Order Service - в completePayment заказ {} оплачен, в ordersRepository поставлен статус PAID",
+        orderId);
   }
 
   @Transactional
   public void failPayment(String orderId, String failureReason) {
+    log.info("Order Service - вызов failPayment для заказа {}", orderId);
     Order order = ordersRepository.findByIdForUpdate(orderId)
         .orElseThrow(() -> new OrderNotFoundException("Заказ не найден по Id: " + orderId));
     order.setStatus("PAYMENT_FAILED");
     order.setFailureReason(failureReason);
     ordersRepository.save(order);
-    log.warn("У заказа {} ошибка оплаты, присвоен статус PAYMENT_FAILED: {}", orderId,
-        failureReason);
+    log.info(
+        "Order Service - в failPayment у заказа {} ошибка оплаты, в ordersRepository поставлен статус PAYMENT_FAILED: {}",
+        orderId, failureReason);
   }
 
   @Transactional
   public void rejectOrder(String orderId, String failureReason) {
+    log.info("Order Service - вызов rejectOrder для заказа {}", orderId);
     Order order = ordersRepository.findByIdForUpdate(orderId)
         .orElseThrow(() -> new OrderNotFoundException("Заказ не найден по Id: " + orderId));
     order.setStatus("REJECTED");
     order.setFailureReason(failureReason);
     ordersRepository.save(order);
-    log.warn("Заказ {} отклонен при создании, присвоен статус REJECTED: {}", orderId,
-        failureReason);
+    log.info(
+        "Order Service - в failPayment заказ {} отклонен при создании, в ordersRepository поставлен статус REJECTED: {}",
+        orderId, failureReason);
   }
 }

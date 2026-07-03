@@ -30,6 +30,7 @@ public class PaymentEventPublisher {
 
   public void publishCompleted(String orderId, String userId, BigDecimal amount,
       BigDecimal newBalance) {
+    log.info("Kafka publisher - вызов publishCompleted для заказа {}", orderId);
     try {
       var event = new OrderPaymentCompletedEvent(
           UUID.randomUUID().toString(),
@@ -48,16 +49,17 @@ public class PaymentEventPublisher {
       );
       outboxRepository.save(outbox);
       log.info(
-          "Outbox event: опубликовано outbox сообщение OrderPaymentCompleted (выполнен платеж) для заказа {}",
+          "Kafka publisher - опубликовано outbox сообщение OrderPaymentCompleted (выполнен платеж) для заказа {}",
           orderId);
     } catch (Exception e) {
       log.error(
-          "Outbox event: ошибка при публикации outbox сообщения OrderPaymentCompleted (выполнен платеж) для заказа {}",
+          "Kafka publisher - ошибка при публикации outbox сообщения OrderPaymentCompleted (выполнен платеж) для заказа {}",
           orderId, e);
     }
   }
 
   public void publishFailed(String orderId, String userId, String failureReason) {
+    log.info("Kafka publisher - вызов publishFailed для заказа {}", orderId);
     try {
       var event = new OrderPaymentFailedEvent(
           UUID.randomUUID().toString(),
@@ -75,12 +77,12 @@ public class PaymentEventPublisher {
       );
       outboxRepository.save(outbox);
       log.info(
-          "Outbox event: опубликовано outbox сообщение OrderPaymentFailed (отказ платежа) для заказа {}: {}",
+          "Kafka publisher - опубликовано outbox сообщение OrderPaymentFailed (отказ платежа) для заказа {}: {}",
           orderId,
           failureReason);
     } catch (Exception e) {
       log.error(
-          "Outbox event: ошибка при публикации outbox сообщения (отказ платежа) для заказа {}",
+          "Kafka publisher - ошибка при публикации outbox сообщения (отказ платежа) для заказа {}",
           orderId, e);
     }
   }
