@@ -85,10 +85,6 @@ Domain - Repository - Service - Kafka - Controller
 
 Микросервис запускается в отдельном контейнере на порту 8080.
 
-**OpenAPI/Swagger** доступен после запуска:  
-Payments: http://localhost:8081/swagger-ui.html  
-Orders: http://localhost:8082/swagger-ui.html
-
 ## Endpoints
 
 ### Endpoints payments-service
@@ -122,15 +118,19 @@ docker-compose up -d --build
 
 **Проверка работоспособности**
 
-```bash
-http://localhost:8080/actuator/health
-```  
+[http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
 
 **Посмотреть активные маршруты**
 
-```bash
-http://localhost:8080/actuator/gateway/routes
-```
+[http://localhost:8080/actuator/gateway/routes](http://localhost:8080/actuator/gateway/routes)
+
+**OpenAPI/Swagger** доступен после запуска:  
+Payments: [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)  
+Orders: [http://localhost:8082/swagger-ui.html](http://localhost:8082/swagger-ui.html)
+
+**Kafka UI**
+
+[http://localhost:8083](http://localhost:8083)
 
 ## Функциональное тестирование
 
@@ -145,8 +145,8 @@ http://localhost:8080/actuator/gateway/routes
 Проект доступен для автотестов, которые расположены в другом репозитории:
 https://github.com/tdutanton/orbita-market-autotests
 
-Для запуска автотестов необходимо при запущенном текущем проекте запустить в репозитории
-orbita-market-autotests:
+Для запуска автотестов необходимо при работающих контейнерах текущего проекта запустить **в
+репозитории orbita-market-autotests**:
 
 ```bash
 gradle test
