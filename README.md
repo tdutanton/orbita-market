@@ -211,6 +211,27 @@ gradle test
    будет
    выброшено исключение StaleObjectStateException.
 
+## Аналитика
+
+Для анализа данных сервисов можно подключиться к соответствующим БД и отправлять sql-запросы.  
+Подключиться можно напрямую с консоли к контейнеру:
+
+- payments-service - **docker compose exec payments-db psql -U postgres -d payments_db**
+- orders-service - **docker compose exec orders-db psql -U postgres -d orders_db**
+
+Или через любую IDE для СУБД (например, dbeaver):
+
+- payments-service - к порту **5432**
+- orders-service - к порту **5433**.
+
+Примеры запросов лежат в **docs/analytics**.
+Результаты запросов (скриншоты с выводом) - в папке **analytics_screens**.  
+Пример результата запроса
+
+![Вывод 1](/analytics_screens/orders_db_query_dbeaver.JPG)
+
+![Вывод 2](/analytics_screens/payments_db_query.JPG)
+
 -----
 June - July 2026  
 Антон Евгеньев  

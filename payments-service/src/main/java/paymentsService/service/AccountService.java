@@ -52,7 +52,7 @@ public class AccountService {
     Account account = accountsRepository.findByUserIdForUpdate(userId)
         .orElseThrow(() -> new AccountNotFoundException("Пользователь и счет не найден"));
 
-    BigDecimal newBalance = account.getBalance().add(amount).setScale(2, RoundingMode.HALF_UP);
+    BigDecimal newBalance = account.getBalance().add(amount).setScale(2, RoundingMode.HALF_EVEN);
     account.setBalance(newBalance);
     Account savedAccount = accountsRepository.save(account);
     return new AccountResponse(

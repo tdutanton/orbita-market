@@ -25,7 +25,7 @@ public class PriceCalculation {
   private BigDecimal orderPrice(double aoi, Integer rate) {
     return BigDecimal.valueOf(aoi)
         .multiply(BigDecimal.valueOf(rate))
-        .setScale(2, RoundingMode.HALF_UP);
+        .setScale(2, RoundingMode.HALF_EVEN);
   }
 
   public BigDecimal calculatePrice(String productType, JsonNode aoi) {
