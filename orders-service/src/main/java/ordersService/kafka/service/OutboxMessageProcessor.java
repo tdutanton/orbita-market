@@ -9,7 +9,6 @@ import ordersService.kafka.repository.OrderOutboxRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
@@ -26,7 +25,7 @@ public class OutboxMessageProcessor {
   @Value("${spring.kafka.max-retry-count}")
   private int maxRetryCount;
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional
   public void processMessage(OrderOutbox outbox) {
     try {
       kafkaTemplate.send(paymentRequestedTopic, outbox.getOrderId(), outbox.getPayload()).get();

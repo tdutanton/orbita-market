@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import paymentsService.kafka.outbox.PaymentOutbox;
 import paymentsService.kafka.repository.PaymentOutboxEventRepository;
@@ -22,7 +21,7 @@ public class OutboxMessageProcessor {
   @Value("${spring.kafka.max-retry-count}")
   private int maxRetryCount;
 
-  @Transactional(propagation = Propagation.REQUIRES_NEW)
+  @Transactional
   public void processMessage(PaymentOutbox outbox) {
     try {
       kafkaTemplate.send(outbox.getTopic(), outbox.getKey(), outbox.getPayload()).get();
