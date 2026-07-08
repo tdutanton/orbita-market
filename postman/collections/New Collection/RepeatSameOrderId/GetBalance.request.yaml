@@ -1,0 +1,27 @@
+$kind: http-request
+url: "{{payments_url}}/accounts/balance"
+method: GET
+headers:
+  X-User-Id: "{{user_id}}"
+  Connection: close
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"статус 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      const response = pm.response.json();\r
+
+      \r
+
+      pm.test(\"New Balance is 700\", function () {\r
+
+      \    pm.expect(response.balance).to.eql(700.0);\r
+
+      });"
+    language: text/javascript
+order: 4461308200127061

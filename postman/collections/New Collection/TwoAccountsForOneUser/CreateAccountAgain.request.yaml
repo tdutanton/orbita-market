@@ -1,0 +1,16 @@
+$kind: http-request
+name: CreateAccountAgain
+url: "{{payments_url}}/accounts"
+method: POST
+headers:
+  X-User-Id: "{{user_id}}"
+  Connection: close
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"статус 409\", () => {\r
+
+      \    pm.response.to.have.status(409);\r
+
+      });"
+    language: text/javascript
+order: 3742444439318813

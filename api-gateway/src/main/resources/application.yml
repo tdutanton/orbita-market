@@ -1,0 +1,36 @@
+server:
+  port: ${GATEWAY_PORT:8080}
+
+# Применен Spring Cloud Gateway сервер
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: orders-service
+          uri: ${ORDERS_SERVICE_URL}
+          predicates:
+            - Path=/orders/**
+          filters:
+            - RewritePath=/orders/(?<segment>.*), /api/v1/orders/$\{segment}
+
+        - id: payments-service
+          uri: ${PAYMENTS_SERVICE_URL}
+          predicates:
+            - Path=/payments/**
+          filters:
+            - RewritePath=/payments/(?<segment>.*), /api/v1/payments/$\{segment}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,info,gateway"
+  endpoint:
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG

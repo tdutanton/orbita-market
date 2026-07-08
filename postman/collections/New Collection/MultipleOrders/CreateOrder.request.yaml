@@ -1,0 +1,38 @@
+$kind: http-request
+url: "{{orders_url}}/orders"
+method: POST
+headers:
+  X-User-Id: "{{user_id}}"
+  Connection: close
+body:
+  type: json
+  content: "{\r
+
+    \  \"productType\": \"ARCHIVE\",\r
+
+    \  \"payload\": {\r
+
+    \    \"aoi\":3.0,\r
+
+    \    \"capture_date\":\"2026-02-02\",\r
+
+    \    \"sensor_type\":\"MSI\"\r
+
+    \  }\r
+
+    }"
+scripts:
+  - type: afterResponse
+    code: "pm.test(\"статус 201\", () => {\r
+
+      \    pm.response.to.have.status(201);\r
+
+      });\r
+
+      \r
+
+      const response = pm.response.json();\r
+
+      pm.environment.set(\"order_id\", response.order_id);"
+    language: text/javascript
+order: 3000

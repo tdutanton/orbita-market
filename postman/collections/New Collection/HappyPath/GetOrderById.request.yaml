@@ -1,0 +1,28 @@
+$kind: http-request
+name: GetOrderById
+url: "{{orders_url}}/{{order_id}}"
+method: GET
+headers:
+  X-User-Id: "{{user_id}}"
+  Connection: close
+scripts:
+  - type: afterResponse
+    code: "const response = pm.response.json();\r
+
+      \r
+
+      pm.test(\"статус 200\", () => {\r
+
+      \    pm.response.to.have.status(200);\r
+
+      });\r
+
+      \r
+
+      pm.test(\"Order status is PAID\", function () {\r
+
+      \    pm.expect(response.status).to.eql(\"PAID\");\r
+
+      });"
+    language: text/javascript
+order: 6000
