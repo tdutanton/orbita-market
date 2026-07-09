@@ -122,6 +122,8 @@ docker-compose up #(без фонового режима)
 docker-compose up -d --build #(для пересборки образов)
 ```  
 
+Если запуск на Linux выдает ошибку - попробуйте через sudo.
+
 **Проверка работоспособности**
 
 [http://localhost:8080/actuator/health](http://localhost:8080/actuator/health)
